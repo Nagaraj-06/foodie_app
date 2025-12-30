@@ -1,0 +1,42 @@
+export const Constants = [
+  {
+    id: "1",
+    name: "Chicken BBQ pizza with mexican flavoured toppings",
+    description: "3 Large pan pizzas, fries, burger",
+    price: 100.0,
+    quantity: 1,
+    image: "https://picsum.photos/seed/pizza/200/200",
+  },
+  {
+    id: "2",
+    name: "Mushroom salad",
+    description: "3 Large pan pizzas, fries, burger",
+    price: 100.0,
+    quantity: 3,
+    image: "https://picsum.photos/seed/salad/200/200",
+  },
+  {
+    id: "3",
+    name: "Grape juice",
+    description: "",
+    price: 100.0,
+    quantity: 2,
+    image: "https://picsum.photos/seed/juice/200/200",
+  },
+  {
+    id: "4",
+    name: "Mushroom sandwich combo",
+    description: "3 Large pan pizzas, fries, burger, Large",
+    price: 100.0,
+    quantity: 1,
+    image: "https://picsum.photos/seed/sandwich/200/200",
+  },
+  {
+    id: "5",
+    name: "Cappuccino",
+    description: "",
+    price: 100.0,
+    quantity: 2,
+    image: "https://picsum.photos/seed/coffee/200/200",
+  },
+];

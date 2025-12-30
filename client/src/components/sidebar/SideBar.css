@@ -1,0 +1,82 @@
+.main {
+  flex: 1;
+  margin: 0;
+  padding: 20px 20px 10px 20px;
+  height: 100vh;
+  background-color: #f7f8fc;
+}
+
+.sidebar {
+  background-color: antiquewhite;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 68px;
+}
+
+.top,
+.bottom {
+  margin: 15px 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: blueviolet;
+  gap: 10px;
+}
+
+.middle {
+  flex: 1;
+  background-color: brown;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* gap: 15px; */
+}
+
+.child {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 75px;
+  width: 100%;
+  gap: 5px;
+  background: white;
+  border-radius: 8px;
+  border: none;
+}
+
+/* Hover effect */
+.child:hover {
+  background-color: rgb(219, 234, 254); /* light blue */
+}
+
+.child.selected {
+  background-color: #d0e3ff; /* slightly darker blue */
+  color: #347be4;
+}
+
+.top-btn {
+  border-radius: 100%;
+  height: 40px;
+  width: 40px;
+}
+
+.bottom-btn {
+  border-radius: 100%;
+  height: 40px;
+  width: 40px;
+}
+
+.profilePic {
+  width: 40px;
+  height: 40px;
+}
+
+.nestlePic {
+  border-radius: 7px;
+  width: 40px;
+  height: 40px;
+}

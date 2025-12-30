@@ -1,0 +1,107 @@
+.headerbar {
+  padding: 15px;
+  border-radius: 20px;
+  /* background-color: pink; */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  height: 35px;
+  width: 20%;
+}
+
+.search-bar input {
+  font-size: 12px;
+  background-color: #f9fafb;
+  width: 100%;
+  padding: 10px 12px 10px 36px; /* left padding for icon */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.search-bar .search-icon {
+  font-size: 18px;
+  color: #7b7c85;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* so click goes to input */
+}
+
+.heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.heading div {
+  gap: 5px;
+}
+
+.heading #hotel-name {
+  display: flex;
+  flex-direction: column;
+  gap: 5 px;
+}
+
+.heading #hotel-name p,
+.heading .arrow-icon {
+  color: #7b7c85;
+}
+
+.heading h2,
+.heading p {
+  margin: 0;
+  padding: 0;
+}
+
+.items-list {
+  padding: 15px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.items-list #all-item {
+  background-color: #0d68e0;
+  color: white;
+}
+
+.items-list button {
+  border: none;
+  border-radius: 5px;
+}
+
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.item-filter-option {
+  cursor: pointer;
+  width: auto;
+  padding: 0px 15px;
+  height: 35px;
+  border-radius: 9999px;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  padding-left: 20px;
+  align-items: center;
+  gap: 10px;
+  background-color: #f9fafb;
+}
+
+.item-filter-option.active-filter {
+  background-color: #0d68e0;
+  color: white;
+}

@@ -1,0 +1,30 @@
+.item-card {
+  height: 220px;
+  width: 200px;
+  margin-top: 10px;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  background-color: #f9fafb;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.item-header {
+  /* background-color: pink; */
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+}
+
+.item-info h3,
+p {
+  margin: 0;
+}
+
+.item-header p {
+  color: #0d68e0;
+  font-weight: 700;
+}

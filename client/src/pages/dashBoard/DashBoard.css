@@ -1,0 +1,10 @@
+.order-history-wrapper {
+  flex: 1;
+  position: relative;
+  transition: all 0.3s;
+}
+.order-history-wrapper.blurred {
+  filter: blur(4px);
+  opacity: 0.5;
+  transform: scale(0.98);
+}

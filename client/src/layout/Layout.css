@@ -1,0 +1,17 @@
+.layout {
+  background-color: #f7f8fc;
+  height: 100vh;
+  display: flex;
+  margin: 0px;
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.page-content {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+}

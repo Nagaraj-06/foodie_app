@@ -1,0 +1,207 @@
+.payment-card {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.payment-header {
+  padding: 1.5rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.payment-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #0f172a;
+  margin: 0;
+}
+
+.payment-user {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #475569;
+}
+
+.payment-user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.payment-body {
+  flex: 1;
+  padding: 2rem;
+}
+
+.summary-rows {
+  margin-bottom: 1.5rem;
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #475569;
+  margin-bottom: 1rem;
+}
+
+.summary-row:last-child {
+  margin-bottom: 0;
+}
+
+.summary-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.grand-total-section {
+  padding-top: 1.5rem;
+  border-top: 1px solid #f1f5f9;
+  margin-bottom: 1.5rem;
+}
+
+.grand-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.grand-total-label {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.grand-total-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #0d6efd;
+}
+
+.add-notes-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  color: #0d6efd;
+  font-weight: 600;
+  background-color: rgba(239, 246, 255, 0.5);
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.add-notes-button:hover {
+  background-color: #eff6ff;
+}
+
+.utility-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.utility-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  background-color: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.utility-button:hover {
+  border-color: #bfdbfe;
+  background-color: white;
+}
+
+.utility-button:hover .utility-icon {
+  color: #0d6efd;
+}
+
+.utility-icon {
+  color: #94a3b8;
+  margin-bottom: 0.25rem;
+  transition: color 0.2s;
+}
+
+.utility-label {
+  font-size: 0.625rem;
+  font-weight: bold;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.payment-footer {
+  padding: 0 2rem 2rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.print-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid #0d6efd;
+  color: #0d6efd;
+  font-weight: bold;
+  border-radius: 1rem;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.print-button:hover {
+  background-color: #eff6ff;
+}
+
+.payment-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #0d6efd;
+  color: white;
+  font-weight: bold;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(13, 110, 253, 0.3);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.payment-button:hover {
+  background-color: #0b5ed7;
+}
+
+.material-icons-outlined {
+  font-family: "Material Icons Outlined";
+  font-size: 1.5rem;
+}
+

@@ -1,0 +1,174 @@
+.header {
+  background-color: white;
+  padding: 20px;
+  border-radius: 20px 20px 0px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.body {
+  padding: 20px;
+  /* background-color: bisque; */
+}
+
+.body h3 {
+  margin: 10px 10px 20px 0px;
+}
+
+.docs-section {
+  padding: 10px;
+}
+.header h3,
+p {
+  margin: 0;
+}
+
+.header p {
+  color: #767f8f;
+}
+
+.input-row {
+  display: flex;
+  flex-direction: space-between;
+  gap: 50px;
+  margin-bottom: 30px;
+}
+
+.input-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  flex: 1;
+}
+
+.input-row div input {
+  margin-left: 3px;
+  border-radius: 10px;
+  border: none;
+  background-color: #f3f4f6;
+  border-color: #3b82f6;
+  padding: 10px;
+  height: 40px;
+}
+
+.input-row .location-input {
+  margin-left: 3px;
+  border-radius: 10px;
+  border: none;
+  background-color: #f3f4f6;
+  padding: 20px;
+  min-height: 80px;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.location-input h4 {
+  margin: 0;
+}
+
+.location-input p {
+  color: #717987;
+}
+
+.location-change-btn {
+  background-color: #dbe6f4;
+  color: #005ddf;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: medium;
+  padding: 10px 20px;
+}
+
+.documents-upload {
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+}
+
+.documents-upload div {
+  width: 100%;
+  border: 2px dashed #b5d3fb;
+  padding: 20px;
+  border-radius: 15px;
+  cursor: pointer;
+  height: 95px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+}
+
+.documents-upload input {
+  display: none;
+}
+
+.documents-upload div span {
+  color: #005ddf;
+  font-size: medium;
+  font-weight: 700;
+}
+
+.documents-upload div p {
+  font-size: small;
+  color: #555;
+}
+
+.upload-icon {
+  color: #696f77;
+}
+
+.selected-file {
+  font-size: medium;
+  color: #555;
+}
+
+.bottom-buttons {
+  width: 100%;
+  background: white; /* white background */
+  padding: 15px 0; /* space around buttons */
+  position: sticky; /* stays in bottom */
+  bottom: 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+.cancel-btn,
+.submit-btn {
+  padding: 12px 25px;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #e5e5e5;
+}
+
+.submit-btn {
+  background: #005ddf;
+  color: white;
+}
+
+body input {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  outline: none;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+body input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
