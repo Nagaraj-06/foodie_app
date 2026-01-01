@@ -20,6 +20,9 @@ backend/services/payment-service/src/config/env.js
 
 backend/generated/prisma
 
+backend/prisma/dist
+backend/prisma/node_modules
+
 backend/npm-debug.log*
 backend/yarn-debug.log*
 backend/pnpm-debug.log*
