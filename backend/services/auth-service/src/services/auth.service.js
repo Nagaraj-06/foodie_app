@@ -1,4 +1,4 @@
-const prisma = require("../config/db.js");
+const { prisma } = require("@foodie-app/prisma-client");
 const redis = require("../config/redis.js");
 const axios = require("axios");
 const { generateToken } = require("../utils/jwt.js");

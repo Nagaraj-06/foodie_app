@@ -1,9 +1,22 @@
 {
+  "name": "foodie-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "prisma:generate": "cd prisma && npx prisma generate",
+    "prisma:migrate": "cd prisma && npx prisma migrate dev",
+    "prisma:studio": "cd prisma && npx prisma studio",
+    "install:all": "npm run prisma:generate && cd services/auth-service && npm install && cd ../order-service && npm install && cd ../payment-service && npm install",
+    "dev:auth": "cd services/auth-service && npm run dev",
+    "dev:order": "cd services/order-service && npm run dev",
+    "dev:payment": "cd services/payment-service && npm run dev"
+  },
   "dependencies": {
-    "@prisma/client": "^7.2.0",
+    "@prisma/client": "^5.22.0",
     "dotenv": "^17.2.3"
   },
   "devDependencies": {
-    "prisma": "^7.2.0"
+    "prisma": "5.22.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
