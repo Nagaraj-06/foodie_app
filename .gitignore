@@ -8,15 +8,15 @@ backend/.env
 
 backend/services/auth-service/node_modules
 backend/services/auth-service/.env
-backend/services/auth-service/src/config/env.js
+# backend/services/auth-service/src/config/env.js
 
 backend/services/order-service/node_modules
 backend/services/order-service/.env
-backend/services/order-service/src/config/env.js
+# backend/services/order-service/src/config/env.js
 
 backend/services/payment-service/node_modules
 backend/services/payment-service/.env
-backend/services/payment-service/src/config/env.js
+# backend/services/payment-service/src/config/env.js
 
 backend/generated/prisma
 
