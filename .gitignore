@@ -28,6 +28,8 @@ backend/yarn-debug.log*
 backend/pnpm-debug.log*
 .env.*
 
+backend/README.md
+
 # OS
 .DS_Store
 Thumbs.db
