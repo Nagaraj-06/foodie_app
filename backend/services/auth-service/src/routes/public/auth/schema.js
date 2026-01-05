@@ -19,6 +19,7 @@ const sendOtpSchema = Joi.object({
   phone: Joi.string()
     .pattern(/^[6-9]\d{9}$/)
     .required(),
+  role_id: Joi.string().required(),
 });
 
 const verifyOtpSchema = Joi.object({
@@ -26,6 +27,7 @@ const verifyOtpSchema = Joi.object({
     .pattern(/^[6-9]\d{9}$/)
     .required(),
   otp: Joi.string().length(6).required(),
+  role_id: Joi.string().required(),
 });
 
 const otpLoginSchema = Joi.object({
@@ -34,10 +36,17 @@ const otpLoginSchema = Joi.object({
     .required(),
 });
 
+const googleLoginSchema = Joi.object({
+  email: Joi.string().email().required(),
+  name: Joi.string().required(),
+  role_id: Joi.number().valid(2, 3).required(),
+});
+
 module.exports = {
   signInSchema,
   signInResponseSchema,
   sendOtpSchema,
   otpLoginSchema,
   verifyOtpSchema,
+  googleLoginSchema,
 };

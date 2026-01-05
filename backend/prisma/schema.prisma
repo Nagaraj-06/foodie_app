@@ -14,169 +14,170 @@ datasource db {
 }
 
 model roles_master {
-  id        String   @id @default(uuid())
-  name      String   @db.VarChar(30)
-  is_active Boolean
+  id         String   @id @default(uuid())
+  name       String   @unique
+  is_active  Boolean
   created_at DateTime @default(now())
 
   users users[] @relation("role_users")
 }
 
 model users {
-  id           String   @id @default(uuid())
-  first_name   String   @db.VarChar(30)
-  last_name    String   @db.VarChar(30)
+  id           String    @id @default(uuid())
+  first_name   String?   @db.VarChar(30)
+  last_name    String?   @db.VarChar(30)
   role_id      String
-  phone_number String   @db.VarChar(15)
-  email        String   @db.VarChar(100)
-  created_at   DateTime @default(now())
-  updated_at   DateTime?
+  phone_number String?   @unique @db.VarChar(15)
+  email        String?   @unique @db.VarChar(100)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime? @updatedAt
   deleted_at   DateTime?
   created_by   String?
   updated_by   String?
   deleted_by   String?
 
-  role       roles_master @relation("role_users", fields: [role_id], references: [id])
-  addresses  addresses[]  @relation("user_addresses")
+  role        roles_master  @relation("role_users", fields: [role_id], references: [id])
+  addresses   addresses[]   @relation("user_addresses")
   restaurants restaurants[] @relation("owner_restaurants")
-  cart       cart[]       @relation("user_cart")
-  orders     orders[]     @relation("user_orders")
+  cart        cart[]        @relation("user_cart")
+  orders      orders[]      @relation("user_orders")
 }
 
 model addresses {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   user_id        String
-  address_type   String   @db.VarChar(30)
-  street_address String   @db.VarChar(30)
-  city           String   @db.VarChar(30)
-  state          String   @db.VarChar(30)
-  zip_code       String   @db.VarChar(30)
-  country_name   String   @db.VarChar(30)
-  is_active      Boolean
-  created_at     DateTime @default(now())
-  updated_at     DateTime?
+  address_type   String    @db.VarChar(30)
+  street_address String    @db.VarChar(30)
+  city           String    @db.VarChar(30)
+  state          String    @db.VarChar(30)
+  zip_code       String    @db.VarChar(30)
+  country_name   String    @db.VarChar(30)
+  is_active      Boolean   @default(true)
+  created_at     DateTime  @default(now())
+  updated_at     DateTime? @updatedAt
   deleted_at     DateTime?
 
-  user        users       @relation("user_addresses", fields: [user_id], references: [id])
+  user        users         @relation("user_addresses", fields: [user_id], references: [id])
   restaurants restaurants[] @relation("address_restaurants")
 }
 
 model restaurants {
-  id                  String   @id @default(uuid())
-  owner_user_id       String
-  restaurant_name     String   @db.VarChar(30)
-  address_id          String
-  verification_status Boolean
-  is_active           Boolean
-  created_at          DateTime @default(now())
-  updated_at          DateTime?
+  id                  String    @id @default(uuid())
+  owner_user_id       String @unique
+  restaurant_name     String?   @db.VarChar(30)
+  photo               String?
+  address_id          String?
+  verification_status Boolean?
+  is_active           Boolean   @default(true)
+  created_at          DateTime  @default(now())
+  updated_at          DateTime? @updatedAt
   deleted_at          DateTime?
   created_by          String?
   updated_by          String?
   deleted_by          String?
 
-  owner               users                 @relation("owner_restaurants", fields: [owner_user_id], references: [id])
-  address             addresses             @relation("address_restaurants", fields: [address_id], references: [id])
-  restaurant_items    restaurant_items[]    @relation("restaurant_items_restaurant")
-  restaurant_documents restaurant_documents[] @relation("restaurant_documents_restaurant")
+  owner                   users                     @relation("owner_restaurants", fields: [owner_user_id], references: [id])
+  address                 addresses?                @relation("address_restaurants", fields: [address_id], references: [id])
+  restaurant_items        restaurant_items[]        @relation("restaurant_items_restaurant")
+  restaurant_documents    restaurant_documents[]    @relation("restaurant_documents_restaurant")
   restaurant_bank_details restaurant_bank_details[] @relation("restaurant_bank_details_restaurant")
-  orders              orders[]              @relation("restaurant_orders")
+  orders                  orders[]                  @relation("restaurant_orders")
 }
 
 model item_category_master {
-  id        String   @id @default(uuid())
-  name      String
-  is_active Boolean
+  id         String   @id @default(uuid())
+  name       String   @unique
+  is_active  Boolean  @default(true)
   created_at DateTime @default(now())
 
   restaurant_items restaurant_items[] @relation("category_items")
 }
 
 model restaurant_items {
-  id           String   @id @default(uuid())
+  id            String    @id @default(uuid())
   restaurant_id String
-  category_id  String
-  name         String
-  food_type    FoodType
-  description  String?
-  photo        String?
-  is_active    Boolean
-  created_at   DateTime @default(now())
-  updated_at   DateTime?
-  deleted_at   DateTime?
-  created_by   String?
-  updated_by   String?
-  deleted_by   String?
+  category_id   String
+  name          String
+  food_type     FoodType
+  description   String?
+  photo         String?
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime? @updatedAt
+  deleted_at    DateTime?
+  created_by    String?
+  updated_by    String?
+  deleted_by    String?
 
-  restaurant   restaurants       @relation("restaurant_items_restaurant", fields: [restaurant_id], references: [id])
-  category     item_category_master @relation("category_items", fields: [category_id], references: [id])
+  restaurant               restaurants                @relation("restaurant_items_restaurant", fields: [restaurant_id], references: [id])
+  category                 item_category_master       @relation("category_items", fields: [category_id], references: [id])
   restaurant_item_variants restaurant_item_variants[] @relation("item_variants_item")
 }
 
 model restaurant_item_variants {
-  id        String   @id @default(uuid())
-  item_id   String
-  name      String
-  price     Float
-  is_active Boolean
-  created_at DateTime @default(now())
-  updated_at DateTime?
+  id         String    @id @default(uuid())
+  item_id    String
+  name       String
+  price      Float
+  is_active  Boolean   @default(true)
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
 
-  item      restaurant_items  @relation("item_variants_item", fields: [item_id], references: [id])
-  cart      cart[]            @relation("cart_variant")
-  order_items order_items[]   @relation("order_items_variant")
+  item        restaurant_items @relation("item_variants_item", fields: [item_id], references: [id])
+  cart        cart[]           @relation("cart_variant")
+  order_items order_items[]    @relation("order_items_variant")
 }
 
 model cart {
-  id        String   @id @default(uuid())
-  user_id   String
+  id         String    @id @default(uuid())
+  user_id    String
   variant_id String
-  quantity  Int
-  created_at DateTime @default(now())
-  updated_at DateTime?
+  quantity   Int
+  created_at DateTime  @default(now())
+  updated_at DateTime? @updatedAt
 
-  user    users                 @relation("user_cart", fields: [user_id], references: [id])
+  user    users                    @relation("user_cart", fields: [user_id], references: [id])
   variant restaurant_item_variants @relation("cart_variant", fields: [variant_id], references: [id])
 }
 
 model orders {
-  id           String   @id @default(uuid())
-  user_id      String
-  restaurant_id String
-  total_amount Float
-  order_number String
+  id             String        @id @default(uuid())
+  user_id        String
+  restaurant_id  String
+  total_amount   Float
+  order_number   String
   payment_method String
   payment_status PaymentStatus
   order_status   OrderStatus
-  created_at     DateTime @default(now())
-  updated_at     DateTime?
+  created_at     DateTime      @default(now())
+  updated_at     DateTime?     @updatedAt
   deleted_at     DateTime?
   created_by     String?
   updated_by     String?
   deleted_by     String?
 
-  user       users       @relation("user_orders", fields: [user_id], references: [id])
-  restaurant restaurants @relation("restaurant_orders", fields: [restaurant_id], references: [id])
+  user        users         @relation("user_orders", fields: [user_id], references: [id])
+  restaurant  restaurants   @relation("restaurant_orders", fields: [restaurant_id], references: [id])
   order_items order_items[] @relation("order_items_order")
   payments    payments[]    @relation("payments_order")
 }
 
 model order_items {
-  id         String   @id @default(uuid())
-  order_id   String
-  variant_id String
-  quantity   Int
-  unit_price Float
+  id          String    @id @default(uuid())
+  order_id    String
+  variant_id  String
+  quantity    Int
+  unit_price  Float
   total_price Float
-  created_at DateTime @default(now())
-  updated_at DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @updatedAt
 
-  order   orders                 @relation("order_items_order", fields: [order_id], references: [id])
+  order   orders                   @relation("order_items_order", fields: [order_id], references: [id])
   variant restaurant_item_variants @relation("order_items_variant", fields: [variant_id], references: [id])
 }
 
 model payments {
-  id                  String   @id @default(uuid())
+  id                  String               @id @default(uuid())
   order_id            String
   gateway             String
   razorpay_order_id   String?
@@ -185,74 +186,73 @@ model payments {
   amount              Float
   currency            String
   status              PaymentGatewayStatus
-  created_at          DateTime @default(now())
-  updated_at          DateTime?
+  created_at          DateTime             @default(now())
+  updated_at          DateTime?            @updatedAt
   deleted_at          DateTime?
   created_by          String?
   updated_by          String?
   deleted_by          String?
 
-  order   orders @relation("payments_order", fields: [order_id], references: [id])
+  order orders @relation("payments_order", fields: [order_id], references: [id])
 }
 
 model webhook_logs {
-  id               String   @id @default(uuid())
-  gateway          String
-  order_id         String
-  payment_id       String
-  event_type       String
-  payload          Json
-  signature_valid  Boolean
-  processed        Boolean
-  received_at      DateTime
-  created_at       DateTime @default(now())
+  id              String   @id @default(uuid())
+  gateway         String
+  order_id        String
+  payment_id      String
+  event_type      String
+  payload         Json
+  signature_valid Boolean
+  processed       Boolean
+  received_at     DateTime
+  created_at      DateTime @default(now())
 }
 
 model document_category_master {
-  id         String   @id @default(uuid())
-  name       String   @db.VarChar(30)
+  id           String   @id @default(uuid())
+  name         String   @unique
   is_mandatory Boolean
-  is_active   Boolean
-  created_at  DateTime @default(now())
+  is_active    Boolean
+  created_at   DateTime @default(now())
 
   restaurant_documents restaurant_documents[] @relation("documents_category")
 }
 
 model restaurant_documents {
-  id                   String   @id @default(uuid())
+  id                   String    @id @default(uuid())
   restaurant_id        String
   document_category_id String
-  document_url         String   @db.VarChar(30)
-  status               Boolean
-  uploaded_at          DateTime
-  created_at           DateTime @default(now())
-  updated_at           DateTime?
+  document_url         String    @db.VarChar(30)
+  status               Boolean @default(false)
+  created_at           DateTime  @default(now())
+  updated_at           DateTime? @updatedAt
   deleted_at           DateTime?
   created_by           String?
   updated_by           String?
   deleted_by           String?
 
-  restaurant        restaurants            @relation("restaurant_documents_restaurant", fields: [restaurant_id], references: [id])
+  restaurant        restaurants              @relation("restaurant_documents_restaurant", fields: [restaurant_id], references: [id])
   document_category document_category_master @relation("documents_category", fields: [document_category_id], references: [id])
 }
 
 model restaurant_bank_details {
-  id                   String   @id @default(uuid())
-  restaurant_id        String
-  account_holder_name  String   @db.VarChar(30)
-  account_number       String   @db.VarChar(30)
-  ifsc_code            String   @db.VarChar(30)
-  bank_name            String   @db.VarChar(30)
-  is_verified          Boolean
-  verified_at          DateTime?
-  created_at           DateTime @default(now())
-  updated_at           DateTime?
-  deleted_at           DateTime?
-  created_by           String?
-  updated_by           String?
-  deleted_by           String?
+  id                  String    @id @default(uuid())
+  restaurant_id       String  @unique
+  account_holder_name String    @db.VarChar(30)
+  account_number      String    @db.VarChar(30)
+  ifsc_code           String    @db.VarChar(30)
+  bank_name           String    @db.VarChar(30)
+  is_verified         Boolean @default(false)
+  verified_at         DateTime?
+  created_at          DateTime?  @default(now())
+  updated_at          DateTime? @updatedAt
+  deleted_at          DateTime?
+  created_by          String?
+  updated_by          String?
+  deleted_by          String?
 
-  restaurant           restaurants @relation("restaurant_bank_details_restaurant", fields: [restaurant_id], references: [id])
+  restaurant restaurants @relation("restaurant_bank_details_restaurant", fields: [restaurant_id], references: [id])
 }
 
 enum FoodType {

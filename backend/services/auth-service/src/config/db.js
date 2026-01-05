@@ -1,7 +1,3 @@
-const { PrismaClient } = require("../../generated/prisma"); // fix path
-const prisma = new PrismaClient();
-const dotenv = require("dotenv");
-
-dotenv.config(); // Loads DATABASE_URL (and other vars) from ../.env
+const { prisma } = require("@foodie-app/prisma-client");
 
 module.exports = prisma;

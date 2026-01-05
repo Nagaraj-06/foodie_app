@@ -1,12 +1,42 @@
 const jwt = require("jsonwebtoken");
-const { jwtSecret } = require("../config/env");
+const {
+  JWT_SECRET,
+  REFRESH_SECRET,
+  JWT_EXPIRES_IN,
+  REFRESH_EXPIRES_IN,
+} = require("../config/env");
 
-function generateToken(payload, expiresIn = "7d") {
-  return jwt.sign(payload, jwtSecret, { expiresIn });
+// generic token generator
+function generateToken(payload, expiresIn, secret) {
+  return jwt.sign(payload, secret, { expiresIn });
 }
 
-function verifyToken(token) {
-  return jwt.verify(token, jwtSecret);
+// generic token verifier
+function verifyToken(token, secret) {
+  return jwt.verify(token, secret);
 }
 
-module.exports = { generateToken, verifyToken };
+// helper for access token (expiry from DB/config)
+function generateAccessToken(user) {
+  return generateToken(
+    { user_id: user.id, role_id: user.role_id },
+    JWT_EXPIRES_IN, // from DB/config
+    JWT_SECRET
+  );
+}
+
+// helper for refresh token (expiry from DB/config)
+function generateRefreshToken(user) {
+  return generateToken(
+    { user_id: user.id, role_id: user.role_id },
+    REFRESH_EXPIRES_IN, // from DB/config
+    REFRESH_SECRET
+  );
+}
+
+module.exports = {
+  generateToken,
+  verifyToken,
+  generateAccessToken,
+  generateRefreshToken,
+};

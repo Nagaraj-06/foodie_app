@@ -1,6 +1,6 @@
-require("dotenv").config();
+const { PORT } = require("../../order-service/src/config/env");
 const app = require("./app");
 
-app.listen(process.env.PORT, () =>
+app.listen(PORT, () =>
   console.log(`Auth service running on ${process.env.PORT}`)
 );

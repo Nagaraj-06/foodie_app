@@ -14,3 +14,20 @@ To get the schema file from pg : `C:\Program Files\PostgreSQL\17\bin\pg_dump.exe
 => After run this remove -> cmd this line => `-- CREATE SCHEMA public;`
 
 `rm -rf node_modules package-lock.json`
+
+
+EPERM: operation not permitted
+query_engine-windows.dll.node
+👉 Windows is blocking Prisma from using that file.
+
+Solution : 
+Close everything:
+
+Stop your server (Ctrl + C)
+
+ -> Close VS Code
+ -> Close terminal
+ -> Then open terminal again and run:
+ -> `npx prisma generate`
+
+ 

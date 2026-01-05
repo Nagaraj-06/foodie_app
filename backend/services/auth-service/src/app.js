@@ -3,6 +3,9 @@ const app = express();
 const rateLimiter = require("./middlewares/rateLimit.middleware");
 const routes = require("../src/routes");
 const errorMiddleware = require("./middlewares/error.middleware");
+const cookieParser = require("cookie-parser");
+
+app.use(cookieParser());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const authMiddleware = require("../middlewares/auth.middleware");
 const rateLimiter = require("../middlewares/rateLimit.middleware");
 const { googleLogin } = require("../controller/auth");
 
@@ -8,11 +7,14 @@ const { googleLogin } = require("../controller/auth");
 const authRoutes = require("./public/auth");
 
 // Private routes
-const users = require("./private/users");
+const usersRoutes = require("./private/users");
+const RestaurantRoutes = require("./private/restaurant");
 
 router.use("/public/api/auth", rateLimiter, authRoutes);
-router.post("/google-login", googleLogin);
+router.use("/private/api/user", rateLimiter, usersRoutes);
 
-// router.use("/private/api/swaps", authMiddleware, swapRoutes);
+router.use("/private/api/restaurant", rateLimiter, RestaurantRoutes);
+
+router.post("/google-login", googleLogin);
 
 module.exports = router;
