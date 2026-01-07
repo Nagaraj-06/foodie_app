@@ -138,6 +138,8 @@ model cart {
 
   user    users                    @relation("user_cart", fields: [user_id], references: [id])
   variant restaurant_item_variants @relation("cart_variant", fields: [variant_id], references: [id])
+
+  @@unique([user_id, variant_id], name: "user_id_variant_id")
 }
 
 model orders {

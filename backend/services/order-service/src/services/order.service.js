@@ -47,8 +47,8 @@ exports.placeOrder = async (userId, data) => {
         total_amount: totalAmount,
         order_number: `ORD-${Date.now()}`,
         payment_method: data.payment_method,
-        payment_status: "CREATED",
-        order_status: "PENDING",
+        payment_status: "PENDING",
+        order_status: "CREATED",
       },
     });
 

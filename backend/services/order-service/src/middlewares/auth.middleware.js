@@ -1,5 +1,6 @@
 const { JWT_SECRET } = require("../config/env");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const authMiddleware =
   (roles = []) =>

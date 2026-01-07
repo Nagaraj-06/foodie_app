@@ -1,8 +1,9 @@
 const { Kafka } = require("kafkajs");
+const { KAFKA_BROKER } = require("./env");
 
 const kafka = new Kafka({
   clientId: "order-service",
-  brokers: [process.env.KAFKA_BROKER],
+  brokers: [KAFKA_BROKER],
 });
 
 const producer = kafka.producer();

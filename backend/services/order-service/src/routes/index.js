@@ -5,8 +5,8 @@ const { addToCart, placeOrder, getMyOrders } = require("../controller/orders");
 
 router.use(authMiddleware());
 
-router.post("/cart/add", addToCart);
-router.post("/place", placeOrder);
-router.get("/my-orders", getMyOrders);
+router.post("/private/api/order/cart/add", addToCart);
+router.post("/private/api/order/place", placeOrder);
+router.get("/private/api/order/my-orders", getMyOrders);
 
 module.exports = router;
