@@ -47,11 +47,11 @@ model addresses {
   id             String    @id @default(uuid())
   user_id        String
   address_type   String    @db.VarChar(30)
-  street_address String    @db.VarChar(30)
-  city           String    @db.VarChar(30)
-  state          String    @db.VarChar(30)
-  zip_code       String    @db.VarChar(30)
-  country_name   String    @db.VarChar(30)
+  street_address String    @db.VarChar(100)
+  city           String    @db.VarChar(50)
+  state          String    @db.VarChar(50)
+  zip_code       String    @db.VarChar(20)
+  country_name   String    @db.VarChar(50)
   is_active      Boolean   @default(true)
   created_at     DateTime  @default(now())
   updated_at     DateTime? @updatedAt

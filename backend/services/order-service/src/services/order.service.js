@@ -1,5 +1,26 @@
 const prisma = require("../config/db");
-const { sendOrderCreatedEvent } = require("../producers/order.producer");
+const {
+  sendOrderCreatedEvent,
+  sendItemAddedToCartEvent,
+  sendItemRemovedFromCartEvent
+} = require("../producers/order.producer");
+
+exports.removeFromCart = async (userId, variantId) => {
+
+  const result = await prisma.cart.delete({
+    where: {
+      user_id_variant_id: {
+        user_id: userId,
+        variant_id: variantId,
+      },
+    },
+  });
+
+  // 🔥 Event Driven
+  await sendItemRemovedFromCartEvent(userId, variantId);
+
+  return result;
+};
 
 exports.addToCart = async (userId, data) => {
   const variant = await prisma.restaurant_item_variants.findUnique({
@@ -8,7 +29,7 @@ exports.addToCart = async (userId, data) => {
 
   if (!variant) throw new Error("Item variant not found");
 
-  return prisma.cart.upsert({
+  const cartItem = await prisma.cart.upsert({
     where: {
       user_id_variant_id: {
         user_id: userId,
@@ -24,49 +45,93 @@ exports.addToCart = async (userId, data) => {
       quantity: data.quantity,
     },
   });
+
+  // 🔥 Event Driven
+  await sendItemAddedToCartEvent(userId, data);
+
+  return cartItem;
 };
 
 exports.placeOrder = async (userId, data) => {
   return prisma.$transaction(async (tx) => {
-    const cartItems = await tx.cart.findMany({
-      where: { user_id: userId },
-      include: { variant: true },
+    const { payment_method, items } = data;
+
+    // Fetch variant details to get prices and restaurant_id
+    const variantIds = items.map(item => item.variant_id);
+    const variants = await tx.restaurant_item_variants.findMany({
+      where: { id: { in: variantIds } },
+      include: {
+        item: {
+          select: { restaurant_id: true }
+        }
+      }
     });
 
-    if (!cartItems.length) throw new Error("Cart is empty");
+    if (variants.length !== variantIds.length) {
+      throw new Error("One or more item variants not found");
+    }
 
-    const totalAmount = cartItems.reduce(
-      (sum, item) => sum + item.variant.price * item.quantity,
-      0
-    );
+    // Group items by restaurant_id
+    const itemsByRestaurant = {};
+    items.forEach(reqItem => {
+      const variant = variants.find(v => v.id === reqItem.variant_id);
+      const restaurantId = variant.item.restaurant_id;
 
-    const order = await tx.orders.create({
-      data: {
+      if (!itemsByRestaurant[restaurantId]) {
+        itemsByRestaurant[restaurantId] = [];
+      }
+
+      itemsByRestaurant[restaurantId].push({
+        ...reqItem,
+        unit_price: variant.price,
+        total_price: variant.price * reqItem.quantity
+      });
+    });
+
+    const createdOrders = [];
+
+    // Create an order for each restaurant
+    for (const restaurantId in itemsByRestaurant) {
+      const restaurantItems = itemsByRestaurant[restaurantId];
+      const totalAmount = restaurantItems.reduce((sum, item) => sum + item.total_price, 0);
+
+      const order = await tx.orders.create({
+        data: {
+          user_id: userId,
+          restaurant_id: restaurantId,
+          total_amount: totalAmount,
+          order_number: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+          payment_method: payment_method,
+          payment_status: "PENDING",
+          order_status: "CREATED",
+        },
+      });
+
+      const orderItemsData = restaurantItems.map((item) => ({
+        order_id: order.id,
+        variant_id: item.variant_id,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        total_price: item.total_price,
+      }));
+
+      await tx.order_items.createMany({ data: orderItemsData });
+
+      createdOrders.push(order);
+
+      // 🔥 Event Driven for each order
+      await sendOrderCreatedEvent(order);
+    }
+
+    // Optional: Clear items from cart if they were ordered
+    await tx.cart.deleteMany({
+      where: {
         user_id: userId,
-        restaurant_id: data.restaurant_id,
-        total_amount: totalAmount,
-        order_number: `ORD-${Date.now()}`,
-        payment_method: data.payment_method,
-        payment_status: "PENDING",
-        order_status: "CREATED",
-      },
+        variant_id: { in: variantIds }
+      }
     });
 
-    const orderItems = cartItems.map((item) => ({
-      order_id: order.id,
-      variant_id: item.variant_id,
-      quantity: item.quantity,
-      unit_price: item.variant.price,
-      total_price: item.variant.price * item.quantity,
-    }));
-
-    await tx.order_items.createMany({ data: orderItems });
-    await tx.cart.deleteMany({ where: { user_id: userId } });
-
-    // 🔥 Event Driven
-    await sendOrderCreatedEvent(order);
-
-    return order;
+    return createdOrders;
   });
 };
 

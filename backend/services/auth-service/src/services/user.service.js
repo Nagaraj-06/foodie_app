@@ -1,15 +1,36 @@
 const { prisma } = require("@foodie-app/prisma-client");
 
 async function updateUser(user_id, data) {
+  const { address, ...userData } = data;
+
+  const updateData = {
+    ...userData,
+  };
+
+  if (address) {
+    updateData.addresses = {
+      create: {
+        ...address,
+      },
+    };
+  }
+
   return await prisma.users.update({
     where: {
       id: user_id,
     },
+    data: updateData,
+    include: {
+      addresses: true,
+    },
+  });
+}
+
+async function createUserAddress(user_id, addressData) {
+  return await prisma.addresses.create({
     data: {
-      first_name: data.first_name,
-      last_name: data.last_name,
-      phone_number: data.phone_number,
-      email: data.email,
+      user_id,
+      ...addressData,
     },
   });
 }
@@ -26,4 +47,4 @@ async function updateRestaurant(ownerUserId, data) {
   });
 }
 
-module.exports = { updateUser, updateRestaurant };
+module.exports = { updateUser, createUserAddress, updateRestaurant };

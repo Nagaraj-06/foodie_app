@@ -148,9 +148,8 @@ export const DeliveryAddress = ({ onProceedToPayment }) => {
               {addresses.map((address) => (
                 <button
                   key={address.id}
-                  className={`address-list-item ${
-                    selectedAddress.id === address.id ? "selected" : ""
-                  }`}
+                  className={`address-list-item ${selectedAddress.id === address.id ? "selected" : ""
+                    }`}
                   onClick={() => handleSelectAddress(address)}
                 >
                   <div className="address-list-icon">
@@ -202,7 +201,7 @@ export const DeliveryAddress = ({ onProceedToPayment }) => {
           className="proceed-payment-button"
           onClick={() => navigate("/payment")}
         >
-          <span className="proceed-button-text">Proceed to Payment</span>
+          <span className="proceed-button-text">Place Order</span>
           <span className="material-icons-outlined">arrow_forward</span>
         </button>
       </div>

@@ -15,3 +15,34 @@ exports.sendOrderCreatedEvent = async (order) => {
     ],
   });
 };
+
+exports.sendItemAddedToCartEvent = async (userId, data) => {
+  await producer.send({
+    topic: "item_added_to_cart",
+    messages: [
+      {
+        value: JSON.stringify({
+          user_id: userId,
+          variant_id: data.variant_id,
+          quantity: data.quantity,
+          timestamp: new Date().toISOString(),
+        }),
+      },
+    ],
+  });
+};
+
+exports.sendItemRemovedFromCartEvent = async (userId, variantId) => {
+  await producer.send({
+    topic: "item_removed_from_cart",
+    messages: [
+      {
+        value: JSON.stringify({
+          user_id: userId,
+          variant_id: variantId,
+          timestamp: new Date().toISOString(),
+        }),
+      },
+    ],
+  });
+};

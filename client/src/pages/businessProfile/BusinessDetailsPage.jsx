@@ -242,7 +242,7 @@ const BusinessDetailsPage = () => {
         </div>
 
         {/* Legal Documents Card */}
-        <div className="legal-documents-card">
+        {/* <div className="legal-documents-card">
           <div className="documents-header">
             <div>
               <h3 className="documents-title">Legal Documents</h3>
@@ -306,7 +306,7 @@ const BusinessDetailsPage = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Bank Account Details Card */}
         <div className="bank-details-card">
