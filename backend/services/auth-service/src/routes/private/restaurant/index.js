@@ -12,6 +12,24 @@ const validate = require("../../../middlewares/validate.middleware");
 const router = express.Router();
 router.use(authMiddleware());
 
+/**
+ * @swagger
+ * /private/api/restaurant/update:
+ *   put:
+ *     summary: Update restaurant profile
+ *     tags: [Restaurant]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateRestaurant'
+ *     responses:
+ *       200:
+ *         description: Restaurant updated
+ */
 router.put(
   "/update",
   validate(updateRestaurantSchema),
@@ -22,6 +40,24 @@ router.put(
   updateRestaurantController
 );
 
+/**
+ * @swagger
+ * /private/api/restaurant/menu-item:
+ *   post:
+ *     summary: Add a new menu item
+ *     tags: [Restaurant]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AddMenuItem'
+ *     responses:
+ *       201:
+ *         description: Menu item added
+ */
 router.post("/menu-item", addMenuItemController);
 
 module.exports = router;

@@ -6,6 +6,9 @@ const {
   refreshTokenService,
   logoutService,
 } = require("../../services/auth.service");
+const {
+  registerRestaurantService,
+} = require("../../services/restaurant.service");
 const jwt = require("jsonwebtoken");
 
 // sign In
@@ -136,6 +139,22 @@ const logout = async (req, res) => {
   }
 };
 
+const registerRestaurant = async (req, res) => {
+  try {
+    const registrationData = req.body;
+    const files = req.files;
+
+    const result = await registerRestaurantService(registrationData, files);
+
+    res.status(201).json({
+      message: "Restaurant registered successfully. You can now login.",
+      data: result,
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 module.exports = {
   signIn,
   sendOtp,
@@ -143,4 +162,5 @@ module.exports = {
   googleLogin,
   refreshToken,
   logout,
+  registerRestaurant,
 };

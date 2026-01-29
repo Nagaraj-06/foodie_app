@@ -17,9 +17,6 @@ const updateUserProfileSchema = Joi.object({
   address: addressSchema.optional(),
 }).min(1); // at least one field required
 
-const addAddressSchema = addressSchema;
-
 module.exports = {
   updateUserProfileSchema,
-  addAddressSchema,
 };

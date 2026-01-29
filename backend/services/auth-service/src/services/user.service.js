@@ -8,11 +8,27 @@ async function updateUser(user_id, data) {
   };
 
   if (address) {
-    updateData.addresses = {
-      create: {
-        ...address,
+    // Check if an identical address already exists for this user
+    const existingAddress = await prisma.addresses.findFirst({
+      where: {
+        user_id: user_id,
+        address_type: address.address_type,
+        street_address: address.street_address,
+        city: address.city,
+        state: address.state,
+        zip_code: address.zip_code,
+        country_name: address.country_name,
+        is_active: true,
       },
-    };
+    });
+
+    if (!existingAddress) {
+      updateData.addresses = {
+        create: {
+          ...address,
+        },
+      };
+    }
   }
 
   return await prisma.users.update({
@@ -22,15 +38,6 @@ async function updateUser(user_id, data) {
     data: updateData,
     include: {
       addresses: true,
-    },
-  });
-}
-
-async function createUserAddress(user_id, addressData) {
-  return await prisma.addresses.create({
-    data: {
-      user_id,
-      ...addressData,
     },
   });
 }
@@ -47,4 +54,4 @@ async function updateRestaurant(ownerUserId, data) {
   });
 }
 
-module.exports = { updateUser, createUserAddress, updateRestaurant };
+module.exports = { updateUser, updateRestaurant };

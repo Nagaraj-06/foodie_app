@@ -42,6 +42,21 @@ const googleLoginSchema = Joi.object({
   role_id: Joi.number().valid(2, 3).required(),
 });
 
+const registerRestaurantSchema = Joi.object({
+  businessName: Joi.string().min(2).max(100).required(),
+  phone: Joi.string()
+    .pattern(/^[6-9]\d{9}$/)
+    .required(),
+  email: Joi.string().email().required(),
+  ownerName: Joi.string().min(2).max(100).required(),
+  location: Joi.string().optional(), // Or object if sending lat/lng
+  accountHolder: Joi.string().required(),
+  accountNumber: Joi.string().required(),
+  ifsc: Joi.string().required(),
+  bankName: Joi.string().required(),
+  // For files, we usually validate them in the controller or via a separate schema if using a field validator
+});
+
 module.exports = {
   signInSchema,
   signInResponseSchema,
@@ -49,4 +64,5 @@ module.exports = {
   otpLoginSchema,
   verifyOtpSchema,
   googleLoginSchema,
+  registerRestaurantSchema,
 };

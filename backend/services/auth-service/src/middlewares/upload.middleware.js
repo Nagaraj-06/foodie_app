@@ -4,11 +4,18 @@ const { v4: uuidv4 } = require("uuid");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    const fs = require("fs");
+    let dest = "";
     if (file.fieldname === "photo") {
-      cb(null, "uploads/restaurants/photos");
+      dest = "uploads/restaurants/photos";
     } else {
-      cb(null, "uploads/restaurants/documents");
+      dest = "uploads/restaurants/documents";
     }
+
+    if (!fs.existsSync(dest)) {
+      fs.mkdirSync(dest, { recursive: true });
+    }
+    cb(null, dest);
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname);

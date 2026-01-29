@@ -138,7 +138,7 @@ exports.placeOrder = async (userId, data) => {
 exports.getUserOrders = async (userId) => {
   return prisma.orders.findMany({
     where: { user_id: userId },
-    include: { items: true },
+    include: { order_items: true },
     orderBy: { created_at: "desc" },
   });
 };

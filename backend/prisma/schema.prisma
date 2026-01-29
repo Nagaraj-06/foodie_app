@@ -64,7 +64,7 @@ model addresses {
 model restaurants {
   id                  String    @id @default(uuid())
   owner_user_id       String @unique
-  restaurant_name     String?   @db.VarChar(30)
+  restaurant_name     String?   @db.VarChar(100)
   photo               String?
   address_id          String?
   verification_status Boolean?
@@ -225,7 +225,7 @@ model restaurant_documents {
   id                   String    @id @default(uuid())
   restaurant_id        String
   document_category_id String
-  document_url         String    @db.VarChar(30)
+  document_url         String    @db.VarChar(255)
   status               Boolean @default(false)
   created_at           DateTime  @default(now())
   updated_at           DateTime? @updatedAt
@@ -241,10 +241,10 @@ model restaurant_documents {
 model restaurant_bank_details {
   id                  String    @id @default(uuid())
   restaurant_id       String  @unique
-  account_holder_name String    @db.VarChar(30)
-  account_number      String    @db.VarChar(30)
-  ifsc_code           String    @db.VarChar(30)
-  bank_name           String    @db.VarChar(30)
+  account_holder_name String    @db.VarChar(100)
+  account_number      String    @db.VarChar(50)
+  ifsc_code           String    @db.VarChar(20)
+  bank_name           String    @db.VarChar(100)
   is_verified         Boolean @default(false)
   verified_at         DateTime?
   created_at          DateTime?  @default(now())

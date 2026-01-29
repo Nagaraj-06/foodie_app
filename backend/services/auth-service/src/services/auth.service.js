@@ -10,10 +10,7 @@ const {
 require("dotenv").config();
 
 const {
-  JWT_SECRET,
-  JWT_EXPIRES_IN,
   REFRESH_SECRET,
-  REFRESH_EXPIRES_IN,
 } = require("../config/env.js");
 
 // Login service
