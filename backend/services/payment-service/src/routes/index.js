@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const razorpayRoutes = require("./razorpay.routes");
+const stripeRoutes = require("./stripe.routes");
 
 /**
  * @swagger
@@ -16,6 +16,6 @@ router.get("/health", (req, res) => {
     res.json({ message: "Payment service is healthy" });
 });
 
-router.use("/razorpay", razorpayRoutes);
+router.use("/stripe", stripeRoutes);
 
 module.exports = router;

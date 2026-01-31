@@ -11,7 +11,7 @@ async function startPaymentConsumer() {
       await prisma.orders.update({
         where: { id: data.order_id },
         data: {
-          payment_status: "CAPTURED",
+          payment_status: "SUCCESS",
           order_status: "CONFIRMED",
         },
       });

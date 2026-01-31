@@ -1,16 +1,14 @@
 const Joi = require("joi");
 
-const createOrderSchema = Joi.object({
-    order_id: Joi.string().uuid().required(),
+const createIntentSchema = Joi.object({
+    order_id: Joi.string().required(),
 });
 
-const verifyPaymentSchema = Joi.object({
-    razorpay_order_id: Joi.string().required(),
-    razorpay_payment_id: Joi.string().required(),
-    razorpay_signature: Joi.string().required(),
+const confirmPaymentSchema = Joi.object({
+    payment_intent_id: Joi.string().required(),
 });
 
 module.exports = {
-    createOrderSchema,
-    verifyPaymentSchema,
+    createIntentSchema,
+    confirmPaymentSchema,
 };

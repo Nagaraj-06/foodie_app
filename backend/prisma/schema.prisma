@@ -181,10 +181,9 @@ model order_items {
 model payments {
   id                  String               @id @default(uuid())
   order_id            String
-  gateway             String
-  razorpay_order_id   String?
-  razorpay_payment_id String?
-  razorpay_signature  String?
+  gateway                  String
+  transaction_id           String?              @unique
+  stripe_payment_intent_id String?              @unique
   amount              Float
   currency            String
   status              PaymentGatewayStatus
