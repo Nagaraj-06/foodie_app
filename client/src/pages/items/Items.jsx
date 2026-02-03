@@ -1,5 +1,5 @@
 import SearchIcon from "@mui/icons-material/Search";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./Items.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import vegRollImg from "../../assets/food-items/vegRoll.png";
 
 const Items = () => {
   const { restaurantName } = useParams();
+  const navigate = useNavigate();
   const decodedName = decodeURIComponent(restaurantName);
   const [searchText, setSearchText] = useState("");
   const [filterOn, setFilterOn] = useState(true);
@@ -74,7 +75,10 @@ const Items = () => {
         <div className="Section">
           <div className="headerbar">
             <div className="heading">
-              <ArrowBackIcon className="arrow-icon" />
+              <ArrowBackIcon
+                className="arrow-icon"
+                onClick={() => navigate("/restaurants")}
+              />
               <div id="hotel-name">
                 <span>
                   <h2>{decodedName}</h2>
@@ -93,13 +97,12 @@ const Items = () => {
               />{" "}
             </div>
           </div>
-          <hr className="line" />
+
 
           <div className="filter-bar">
             <button
-              className={`filter-main ${
-                selectedCategory === "All" ? "active-filter" : ""
-              }`}
+              className={`filter-main ${selectedCategory === "All" ? "active-filter" : ""
+                }`}
               onClick={() => setSelectedCategory("All")}
             >
               <FilterIcon className="icon" />
@@ -109,9 +112,8 @@ const Items = () => {
             {Items.map((cat) => (
               <button
                 key={cat.id}
-                className={`item-filter-option ${
-                  selectedCategory === cat.name ? "active-filter" : ""
-                }`}
+                className={`item-filter-option ${selectedCategory === cat.name ? "active-filter" : ""
+                  }`}
                 onClick={() => setSelectedCategory(cat.name)}
               >
                 {cat.name}
@@ -119,7 +121,7 @@ const Items = () => {
             ))}
           </div>
 
-          <hr className="line" />
+
           <div className="item-grid">
             {Items.filter((cat) => {
               // filter categories

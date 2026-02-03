@@ -82,9 +82,8 @@ export const VariantSelector = ({ product }) => {
                 return (
                   <label
                     key={variant.id}
-                    className={`variant-option ${
-                      isSelected ? "variant-option-selected" : ""
-                    }`}
+                    className={`variant-option ${isSelected ? "variant-option-selected" : ""
+                      }`}
                   >
                     <div className="variant-option-left">
                       <input

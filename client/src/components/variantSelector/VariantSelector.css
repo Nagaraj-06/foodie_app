@@ -1,68 +1,51 @@
 .variant-selector-container {
   width: 100%;
-  max-width: 460px;
+  max-width: 475px;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   border: 1px solid #e5e7eb;
-  height: 85vh;
+  height: auto;
+  max-height: 85vh;
+  overflow: hidden;
 }
 
 /* Header */
 .variant-selector-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  padding: 18px;
-  border-bottom: 1px solid #e5e7eb;
-  flex-shrink: 0;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  background-color: white;
 }
 
 .variant-selector-title {
-  display: flex;
-  font-size: 20px;
+  font-size: 1.125rem;
   font-weight: 700;
   color: #111827;
   margin: 0;
 }
 
-.variant-close-button {
-  padding: 8px;
-  color: #6b7280;
-  border-radius: 50%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.variant-close-button:hover {
-  background-color: #f3f4f6;
-}
-
-.variant-close-button .material-symbols-outlined {
-  font-size: 18px;
-}
-
 /* Content Area */
 .variant-selector-content {
   flex: 1;
-  padding: 18px;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 1.5rem;
   overflow-y: auto;
 }
 
+/* Scrollbar Styling */
 .variant-selector-content::-webkit-scrollbar {
   width: 6px;
 }
 
 .variant-selector-content::-webkit-scrollbar-track {
-  background: #f3f4f6;
-  border-radius: 3px;
+  background: transparent;
 }
 
 .variant-selector-content::-webkit-scrollbar-thumb {
@@ -78,7 +61,7 @@
 .variant-product-info {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .variant-product-image-wrapper {
@@ -87,29 +70,29 @@
 }
 
 .variant-product-image {
-  width: 96px;
-  height: 96px;
-  border-radius: 8px;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid #f3f4f6;
 }
 
 .variant-product-badge {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 28px;
-  height: 28px;
-  background-color: #2d5899;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
+  background-color: #2563eb;
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 0.75rem;
   font-weight: 700;
   border: 2px solid white;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .variant-product-details {
@@ -117,48 +100,46 @@
 }
 
 .variant-product-name {
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: 700;
+  font-size: 1.125rem;
   color: #111827;
   line-height: 1.4;
-  margin: 0 0 4px 0;
+  margin: 0 0 0.25rem 0;
 }
 
 .variant-product-description {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #6b7280;
   margin: 0;
   line-height: 1.5;
 }
 
-/* Tabs */
+/* Tabs - Kept for structure but unused in current JSX */
 .variant-tabs {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background-color: #f3f4f6;
+  border-radius: 10px;
 }
 
 .variant-tab {
   flex: 1;
-  padding: 12px 16px;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   font-weight: 600;
-  font-size: 14px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  transition: all 0.2s;
-  background-color: #f3f4f6;
+  font-size: 0.875rem;
   color: #6b7280;
   border: none;
   cursor: pointer;
-}
-
-.variant-tab:hover {
-  background-color: #e5e7eb;
+  background: transparent;
+  transition: all 0.2s;
 }
 
 .variant-tab-active {
-  background-color: #2d5899;
-  color: white;
-  box-shadow: 0 4px 6px -1px #2d5899;
+  background-color: white;
+  color: #111827;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 /* Variants List */
@@ -168,58 +149,58 @@
 }
 
 .variant-list-title {
-  font-size: 18px;
+  font-size: 1rem;
   font-weight: 600;
-  margin: 0 0 16px 0;
-  color: #111827;
+  margin: 0 0 1rem 0;
+  color: #374151;
 }
 
 .variant-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .variant-option {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  border-radius: 8px;
-  border: 2px solid transparent;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
   cursor: pointer;
   transition: all 0.2s;
   background-color: white;
-  box-shadow: 0 0 0 1px #e5e7eb;
 }
 
 .variant-option:hover {
-  border-color: #e5e7eb;
+  border-color: #d1d5db;
+  background-color: #f9fafb;
 }
 
 .variant-option-selected {
-  border-color: #2d5899;
-  background-color: rgba(255, 107, 107, 0.05);
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  border-color: #2563eb;
+  background-color: #eff6ff;
+  box-shadow: 0 0 0 1px #2563eb;
 }
 
 .variant-option-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 1rem;
 }
 
 .variant-radio {
-  width: 20px;
-  height: 20px;
-  accent-color: #2d5899;
+  width: 18px;
+  height: 18px;
+  accent-color: #2563eb;
   cursor: pointer;
 }
 
 .variant-option-name {
+  font-size: 0.95rem;
   font-weight: 500;
-  color: #6b7280;
-  transition: color 0.2s;
+  color: #374151;
 }
 
 .variant-option-selected .variant-option-name {
@@ -228,13 +209,13 @@
 }
 
 .variant-option-price {
-  font-weight: 700;
-  color: #111827;
-  transition: color 0.2s;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #374151;
 }
 
 .variant-option-selected .variant-option-price {
-  color: #2d5899;
+  color: #2563eb;
 }
 
 /* Empty State */
@@ -244,112 +225,109 @@
   justify-content: center;
   height: 160px;
   color: #6b7280;
+  font-size: 0.95rem;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  border: 1px dashed #e5e7eb;
 }
 
 .variant-empty-state p {
   margin: 0;
 }
 
-/* Footer */
+/* Footer & Actions */
 .variant-selector-footer {
-  padding: 16px;
-  margin-top: auto;
-  border-top: 1px solid #e5e7eb;
-  background-color: rgba(249, 250, 251, 0.5);
-  flex-shrink: 0;
-  border-radius: 0 0 12px 12px;
+  padding: 1.5rem;
+  border-top: 1px solid #f3f4f6;
+  background-color: white;
 }
 
 .variant-total-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 1.25rem;
 }
 
 .variant-total-label {
-  font-size: 18px;
+  font-size: 1rem;
   font-weight: 600;
-  color: #6b7280;
+  color: #4b5563;
 }
 
 .variant-total-price {
-  font-size: 18px;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #111827;
 }
 
 .variant-actions {
   display: flex;
-  align-items: center;
-  gap: 16px;
+  align-items: stretch;
+  gap: 1rem;
+  height: 48px;
 }
 
 /* Quantity Controls */
 .variant-quantity-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  background-color: #f3f4f6;
+  border-radius: 12px;
   padding: 4px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background-color: white;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  width: 120px;
 }
 
 .variant-quantity-button {
-  width: 40px;
-  height: 30px;
+  width: 36px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2d5899;
-  background: none;
-  border: none;
-  border-radius: 6px;
+  color: #111827;
+  background: white;
+  border: 1px solid transparent;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.variant-quantity-button:hover:not(:disabled) {
-  background-color: rgba(255, 107, 107, 0.1);
+.variant-quantity-button:active {
+  transform: scale(0.95);
 }
 
 .variant-quantity-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.variant-quantity-button .material-symbols-outlined {
-  font-size: 20px;
+  color: #9ca3af;
+  box-shadow: none;
+  background: transparent;
 }
 
 .variant-quantity-display {
-  padding: 0 12px;
-  font-size: 18px;
-  font-weight: 600;
-  width: 48px;
+  flex: 1;
   text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
 }
 
 /* Add Button */
 .variant-add-button {
   flex: 1;
-  background-color: #2d5899;
+  background-color: #2563eb;
   color: white;
   font-weight: 600;
-  padding: 16px;
-  border-radius: 8px;
+  font-size: 1rem;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  transition: all 0.15s;
-  box-shadow: 0 10px 15px -3px rgba(255, 107, 107, 0.2);
+  transition: background-color 0.2s;
 }
 
 .variant-add-button:hover {
-  background-color: #2d5899;
+  background-color: #1d4ed8;
 }
 
 .variant-add-button:active {
-  transform: scale(0.99);
+  transform: scale(0.98);
 }

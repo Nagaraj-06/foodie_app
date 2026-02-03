@@ -1,10 +1,16 @@
 import React, { useRef, useState } from "react";
 import "./BusinessRegister.css";
-import LocationIcon from "@mui/icons-material/LocationCitySharp";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import MapPicker from "../../components/MapPicker/MapPicker";
+
+// Google Maps API Key from .env
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const BusinessRegister = () => {
   const [dragging, setDragging] = React.useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
   // refs for each upload box
   const fssaiRef = useRef();
@@ -40,11 +46,12 @@ const BusinessRegister = () => {
       setter(file);
     }
   };
+
   const [form, setForm] = useState({
     // Business Info
     businessName: "",
     phone: "",
-    location: "",
+    location: "123 Market St, San Francisco, CA",
 
     // Owner Info
     ownerName: "",
@@ -61,6 +68,11 @@ const BusinessRegister = () => {
     pan: null,
     gst: null,
   });
+
+  const handleLocationConfirm = (address, position) => {
+    setForm((prev) => ({ ...prev, location: address }));
+    setIsMapOpen(false);
+  };
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -89,9 +101,7 @@ const BusinessRegister = () => {
             <h3>Restaurant Information</h3>
             <div className="input-row">
               <div>
-                {/* <label>Business name</label> */}
                 <label>Restaurant name</label>
-
                 <input
                   name="businessName"
                   placeholder="e.g., The Grand Hotel"
@@ -115,7 +125,7 @@ const BusinessRegister = () => {
                 <label>Phone number</label>
                 <input
                   name="phone"
-                  placeholder="+91 9875657600"
+                  placeholder="+9 Indian 9875657600"
                   value={form.phone}
                   onChange={handleChange}
                 />
@@ -134,21 +144,33 @@ const BusinessRegister = () => {
               <div>
                 <h3>Location</h3>
 
-                <span
-                  className="location-input"
-                  name="location"
-                  value={form.location}
-                  onChange={handleChange}
-                >
-                  <LocationIcon />
+                <span className="location-input">
+                  <LocationOnIcon className="location-pin-icon" />
                   <div className="location-section">
                     <h4>Location/address on the map</h4>
-                    <p>123 Market St, San Francisco, CA</p>
+                    <p className="location-text-display">
+                      {form.location || "Choose location on map"}
+                    </p>
                   </div>
-                  <button className="location-change-btn">Change</button>
+                  <button
+                    type="button"
+                    className="location-change-btn"
+                    onClick={() => setIsMapOpen(true)}
+                  >
+                    Change
+                  </button>
                 </span>
               </div>
             </div>
+
+            {/* Map Picker Modal */}
+            <MapPicker
+              isOpen={isMapOpen}
+              onClose={() => setIsMapOpen(false)}
+              onConfirm={handleLocationConfirm}
+              googleMapsApiKey={GOOGLE_MAPS_API_KEY}
+            />
+
             <div className="docs-section">
               <h3>Legal Documents</h3>
               <div className="documents-upload">

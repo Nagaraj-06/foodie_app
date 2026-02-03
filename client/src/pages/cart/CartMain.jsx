@@ -8,7 +8,23 @@ import { DeliveryAddress } from "../../components/DeliveryAddress/DeliveryAddres
 import AddressModal from "../../components/AddressModal/AddressModal";
 
 const CartMain = () => {
-  const [cartItems, setCartItems] = useState(Constants);
+  const [cartItems, setCartItems] = useState(
+    Constants.map((item) => ({ ...item, selected: true }))
+  );
+
+  const toggleSelection = (id) => {
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, selected: !item.selected } : item
+      )
+    );
+  };
+
+  const toggleAll = (isSelected) => {
+    setCartItems((prev) =>
+      prev.map((item) => ({ ...item, selected: isSelected }))
+    );
+  };
 
   const updateQuantity = (id, delta) => {
     setCartItems((prev) =>
@@ -27,7 +43,8 @@ const CartMain = () => {
   };
 
   const totals = useMemo(() => {
-    const subTotal = cartItems.reduce(
+    const selectedItems = cartItems.filter((item) => item.selected);
+    const subTotal = selectedItems.reduce(
       (acc, item) => acc + item.price * item.quantity,
       0
     );
@@ -51,10 +68,12 @@ const CartMain = () => {
               items={cartItems}
               onUpdateQuantity={updateQuantity}
               onRemoveItem={removeItem}
+              onToggleSelection={toggleSelection}
+              onToggleAll={toggleAll}
+              totals={totals}
             />
           </div>
           <div className="payment-section">
-            {/* <PaymentSummary totals={totals} /> */}
             <DeliveryAddress />
           </div>
         </div>

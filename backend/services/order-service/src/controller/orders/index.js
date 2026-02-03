@@ -37,6 +37,21 @@ exports.placeOrder = async (req, res) => {
 };
 
 exports.getMyOrders = async (req, res) => {
-  const orders = await orderService.getUserOrders(req.user.id);
-  res.json({ data: orders });
+  try {
+    const orders = await orderService.getUserOrders(req.user.user_id);
+    res.json({ success: true, data: orders });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.getRestaurantOrderHistory = async (req, res) => {
+  try {
+    const { period } = req.query;
+    const history = await orderService.getRestaurantOrderHistory(req.user.user_id, period);
+    res.json({ success: true, data: history });
+  } catch (err) {
+    const status = err.message.includes("not found") ? 404 : 500;
+    res.status(status).json({ success: false, message: err.message });
+  }
 };

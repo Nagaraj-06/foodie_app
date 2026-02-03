@@ -16,19 +16,18 @@ const Sidebar = () => {
         <nav className="sidebar-nav">
           <NavItem icon="dashboard" label="Dashboard" path="/dashboard" />
           <NavItem
-            icon="store"
+            icon="add_business"
             label="RegisterBusiness"
             path="/business_register"
           />
-          <NavItem icon="inventory" label="AddMenuItem" path="/add_menu_item" />
+          <NavItem icon="post_add" label="AddMenuItem" path="/add_menu_item" />
           <NavItem
-            icon="point_of_sale"
+            icon="storefront" 
             label="Restaurants"
             path="/restaurants"
           />
           <NavItem icon="receipt_long" label="MyOrders" path="/myorders" />
-          <NavItem icon="people" label="carts" path="/carts" />
-          <NavItem icon="notifications" label="Alerts" path="/alerts" />
+          <NavItem icon="shopping_cart" label="carts" path="/carts" />
         </nav>
       </div>
 

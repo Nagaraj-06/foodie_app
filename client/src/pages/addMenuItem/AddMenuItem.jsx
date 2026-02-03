@@ -207,7 +207,6 @@ const AddMenuItem = () => {
                   <span className="material-symbols-outlined">add</span>
                   Add Variant
                 </button>
-                <br />
               </div>
 
               <div className="add-menu-variants-list">
@@ -271,11 +270,9 @@ const AddMenuItem = () => {
               </p>
             </div>
           </div>
-          <div>
-            <div className="bottom-buttons">
-              <button className="cancel-btn">Cancel</button>
-              <button className="submit-btn">Add Item </button>
-            </div>
+          <div className="bottom-buttons">
+            <button className="cancel-btn">Cancel</button>
+            <button className="submit-btn">Add Item </button>
           </div>
         </form>
       </div>

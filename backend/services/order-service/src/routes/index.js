@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth.middleware");
-const { addToCart, removeFromCart, placeOrder, getMyOrders } = require("../controller/orders");
+const { addToCart, removeFromCart, placeOrder, getMyOrders, getRestaurantOrderHistory } = require("../controller/orders");
 
 router.use(authMiddleware());
 
@@ -95,5 +95,28 @@ router.post("/private/api/order/place", placeOrder);
  *                     type: object
  */
 router.get("/private/api/order/my-orders", getMyOrders);
+
+/**
+ * @swagger
+ * /private/api/order/restaurant/history:
+ *   get:
+ *     summary: Get order history for the restaurant
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of restaurant orders
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ */
+router.get("/private/api/order/restaurant/history", getRestaurantOrderHistory);
 
 module.exports = router;

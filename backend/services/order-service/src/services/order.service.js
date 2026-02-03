@@ -136,9 +136,112 @@ exports.placeOrder = async (userId, data) => {
 };
 
 exports.getUserOrders = async (userId) => {
-  return prisma.orders.findMany({
+  const orders = await prisma.orders.findMany({
     where: { user_id: userId },
-    include: { order_items: true },
+    include: {
+      order_items: {
+        include: {
+          variant: {
+            include: { item: true }
+          }
+        }
+      }
+    },
     orderBy: { created_at: "desc" },
   });
+
+  return orders.map(order => {
+    // Map internal status to display status
+    let displayStatus = "IN_PROGRESS";
+    if (order.order_status === "DELIVERED") displayStatus = "COMPLETED";
+    else if (order.order_status === "CANCELLED") displayStatus = "CANCELLED";
+    else if (order.order_status === "REFUNDED") displayStatus = "REFUNDED";
+
+    // Format item details (e.g., "Pepperoni Pizza + 1 item")
+    const firstItem = order.order_items[0]?.variant?.item?.name || "Unknown Item";
+    const extraCount = order.order_items.length - 1;
+    const itemSummary = extraCount > 0 ? `${firstItem} + ${extraCount} item` : firstItem;
+
+    return {
+      id: order.id,
+      order_number: order.order_number,
+      display_status: displayStatus,
+      status: order.order_status,
+      item_summary: itemSummary,
+      total_amount: order.total_amount,
+      created_at: order.created_at,
+      // Frontend can format this as "Aug 23, 2024 at 12:30 PM"
+    };
+  });
+};
+
+exports.getRestaurantOrderHistory = async (ownerId, period = "month") => {
+  // 0. Find restaurant associated with owner
+  const restaurant = await prisma.restaurants.findFirst({
+    where: { owner_user_id: ownerId }
+  });
+
+  if (!restaurant) {
+    throw new Error("Restaurant not found for this owner");
+  }
+
+  const restaurantId = restaurant.id;
+  const now = new Date();
+  const startOfCurrent = new Date(now.getFullYear(), now.getMonth(), 1);
+  const startOfLast = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+  // 1. Fetch orders for analytics
+  const orders = await prisma.orders.findMany({
+    where: {
+      restaurant_id: restaurantId,
+      created_at: { gte: startOfLast }
+    },
+    include: {
+      order_items: true,
+      user: { select: { first_name: true, last_name: true } }
+    },
+    orderBy: { created_at: "desc" }
+  });
+  console.log(orders);
+  const currentOrders = orders.filter(o => o.created_at >= startOfCurrent);
+  const lastOrders = orders.filter(o => o.created_at < startOfCurrent);
+
+  // 2. Calculate Stats
+  const calculateStats = (orderList) => {
+    const revenue = orderList.reduce((sum, o) => sum + (o.payment_status === "SUCCESS" ? o.total_amount : 0), 0);
+    const count = orderList.length;
+    const avgValue = count > 0 ? revenue / count : 0;
+    return { revenue, count, avgValue };
+  };
+
+  const currentStats = calculateStats(currentOrders);
+  const lastStats = calculateStats(lastOrders);
+
+  // 3. Calculate Comparisons
+  const calcDiff = (curr, prev) => prev > 0 ? ((curr - prev) / prev) * 100 : 0;
+
+  return {
+    summary: {
+      total_revenue: {
+        value: currentStats.revenue,
+        diff: calcDiff(currentStats.revenue, lastStats.revenue)
+      },
+      total_orders: {
+        value: currentStats.count,
+        diff: calcDiff(currentStats.count, lastStats.count)
+      },
+      avg_order_value: {
+        value: currentStats.avgValue,
+        diff: calcDiff(currentStats.avgValue, lastStats.avgValue)
+      }
+    },
+    recent_orders: currentOrders.slice(0, 6).map(o => ({
+      id: o.id,
+      order_number: o.order_number,
+      customer: `${o.user.first_name} ${o.user.last_name}`,
+      amount: o.total_amount,
+      status: o.order_status,
+      created_at: o.created_at
+    }))
+  };
 };

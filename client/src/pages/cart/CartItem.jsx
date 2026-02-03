@@ -1,22 +1,30 @@
 import React, { useState, useMemo } from "react";
 import "./CartItem.css";
 
-export const CartItem = ({ item, onUpdateQuantity, onRemoveItem }) => {
+export const CartItem = ({ item, onUpdateQuantity, onRemoveItem, onToggleSelection }) => {
   return (
-    <div className="cart-item">
-      <div className="item-info">
-        <img src={item.image} alt={item.name} className="item-image" />
-        <div className="item-details">
-          <h3 className="item-name" title={item.name}>
+    <div className={`cart-item ${!item.selected ? 'item-unselected' : ''}`}>
+      <div className="cart-item-selection">
+        <input
+          type="checkbox"
+          checked={item.selected}
+          onChange={() => onToggleSelection(item.id)}
+          className="cart-item-checkbox"
+        />
+      </div>
+      <div className="cart-item-info">
+        <img src={item.image} alt={item.name} className="cart-item-image" />
+        <div className="cart-item-details">
+          <h3 className="cart-item-name" title={item.name}>
             {item.name}
           </h3>
           {item.description && (
-            <p className="item-description">{item.description}</p>
+            <p className="cart-item-description">{item.description}</p>
           )}
         </div>
       </div>
 
-      <div className="item-quantity">
+      <div className="cart-item-quantity">
         <button
           onClick={() => onUpdateQuantity(item.id, -1)}
           className="qty-button"
@@ -32,11 +40,11 @@ export const CartItem = ({ item, onUpdateQuantity, onRemoveItem }) => {
         </button>
       </div>
 
-      <div className="item-amount">
+      <div className="cart-item-amount">
         {(item.price * item.quantity).toFixed(2)}
       </div>
 
-      <div className="item-delete">
+      <div className="cart-item-delete">
         <button onClick={() => onRemoveItem(item.id)} className="delete-button">
           <span className="material-icons-outlined">delete</span>
         </button>

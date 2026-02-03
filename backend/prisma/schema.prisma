@@ -265,6 +265,7 @@ enum PaymentStatus {
   PENDING
   SUCCESS
   FAILED
+  REFUNDED
 }
 
 enum OrderStatus {
@@ -274,6 +275,7 @@ enum OrderStatus {
   READY
   DELIVERED
   CANCELLED
+  REFUNDED
 }
 
 enum PaymentGatewayStatus {
