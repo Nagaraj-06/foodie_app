@@ -1,0 +1,25 @@
+# Ignore all node_modules in the monorepo
+**/node_modules
+node_modules
+
+# Ignore environment files
+**/.env
+.env
+
+# Ignore git
+.git
+.gitignore
+
+# Ignore build artifacts and logs
+**/dist
+**/build
+npm-debug.log*
+
+# Ignore specific Docker files
+**/Dockerfile
+**/.dockerignore
+
+# Do NOT ignore the prisma folder as it is required for building services
+# (Wait, **/node_modules already covers subdirectories, which is what we want)
+# We want to keep backend/prisma/ but ignore its node_modules
+# The glob **/node_modules will handle that.
