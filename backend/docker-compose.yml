@@ -9,6 +9,10 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_log:/var/lib/zookeeper/log
+    restart: always
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -24,6 +28,15 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     platform: linux/amd64
+    restart: always
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: always
+
 
   gateway:
     image: nginx:latest
@@ -37,6 +50,7 @@ services:
     depends_on:
       - kafka
       - auth-service
+    restart: always
 
   auth-service:
     build:
@@ -51,3 +65,38 @@ services:
       - "host.docker.internal:host-gateway"
     depends_on:
       - kafka
+    restart: always
+
+  order-service:
+    build:
+      context: .
+      dockerfile: services/order-service/Dockerfile
+    container_name: order-service
+    ports:
+      - "3002:3002"
+    env_file:
+      - services/order-service/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - kafka
+    restart: always
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: services/payment-service/Dockerfile
+    container_name: payment-service
+    ports:
+      - "3003:3003"
+    env_file:
+      - services/payment-service/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - kafka
+    restart: always
+
+volumes:
+  zookeeper_data:
+  zookeeper_log:
