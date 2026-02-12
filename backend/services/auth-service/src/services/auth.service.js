@@ -99,6 +99,7 @@ async function createOwnerWithRestaurant(prisma, userData) {
         role_id: userData.role_id,
         phone_number: userData.phone_number ?? null,
         email: userData.email ?? null,
+        first_name: userData.first_name ?? null,
       },
     });
 
@@ -195,9 +196,20 @@ const googleLoginService = async (email, name, role_id) => {
 
   // new user → create with selected role
   if (!user) {
-    user = await prisma.users.create({
-      data: { email, first_name: name, role_id },
-    });
+    const role = await prisma.roles_master.findUnique({ where: { id: role_id } });
+
+    if (role?.name === "restaurant_owner") {
+      const result = await createOwnerWithRestaurant(prisma, {
+        email,
+        role_id,
+        first_name: name
+      });
+      user = result.user;
+    } else {
+      user = await prisma.users.create({
+        data: { email, first_name: name, role_id },
+      });
+    }
   }
 
   // create tokens
@@ -230,7 +242,13 @@ const refreshTokenService = async (user_id, token) => {
   return { accessToken: newAccessToken };
 };
 
-// logout
+const getRolesService = async () => {
+  return await prisma.roles_master.findMany({
+    where: { is_active: true },
+    select: { id: true, name: true }
+  });
+};
+
 const logoutService = async (user_id) => {
   await redis.del(`refresh:${user_id}`);
   return true;
@@ -241,6 +259,7 @@ module.exports = {
   sendOtpService,
   verifyOtpService,
   googleLoginService,
+  getRolesService,
   refreshTokenService,
   logoutService,
 };

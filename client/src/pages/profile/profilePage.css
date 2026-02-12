@@ -266,6 +266,33 @@
   color: #2d5899;
 }
 
+.profile-logout-section {
+  margin-top: 15px;
+}
+
+.logout-button-profile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button-profile:hover {
+  background-color: #fecaca;
+  transform: translateY(-1px);
+}
+
+.logout-button-profile .material-symbols-outlined {
+  font-size: 20px;
+}
+
 /* Form Section */
 .form-section-header {
   margin-bottom: 24px;

@@ -3,13 +3,13 @@ import "./AddressModal.css";
 
 const AddressModal = ({ isOpen, onClose, onSave, editingAddress }) => {
   const [formData, setFormData] = useState({
-    type: "Home",
-    addressLine1: "",
+    address_type: "Home",
+    street_address: "",
     city: "",
     state: "",
-    zip: "",
-    country: "United States",
-    isDefault: false,
+    zip_code: "",
+    country_name: "United States",
+    is_active: true,
   });
 
   useEffect(() => {
@@ -17,13 +17,13 @@ const AddressModal = ({ isOpen, onClose, onSave, editingAddress }) => {
       setFormData(editingAddress);
     } else {
       setFormData({
-        type: "Home",
-        addressLine1: "",
+        address_type: "Home",
+        street_address: "",
         city: "",
         state: "",
-        zip: "",
-        country: "United States",
-        isDefault: false,
+        zip_code: "",
+        country_name: "United States",
+        is_active: true,
       });
     }
   }, [editingAddress, isOpen]);
@@ -38,10 +38,10 @@ const AddressModal = ({ isOpen, onClose, onSave, editingAddress }) => {
 
   const handleSubmit = () => {
     if (
-      formData.addressLine1 &&
+      formData.street_address &&
       formData.city &&
       formData.state &&
-      formData.zip
+      formData.zip_code
     ) {
       onSave(formData);
     } else {
@@ -69,9 +69,9 @@ const AddressModal = ({ isOpen, onClose, onSave, editingAddress }) => {
               Address Type
             </label>
             <select
-              id="type"
-              name="type"
-              value={formData.type}
+              id="address_type"
+              name="address_type"
+              value={formData.address_type}
               onChange={handleChange}
               className="form-input"
             >
@@ -87,9 +87,9 @@ const AddressModal = ({ isOpen, onClose, onSave, editingAddress }) => {
             </label>
             <input
               type="text"
-              id="addressLine1"
-              name="addressLine1"
-              value={formData.addressLine1}
+              id="street_address"
+              name="street_address"
+              value={formData.street_address}
               onChange={handleChange}
               className="form-input"
               placeholder="Enter street address"
@@ -135,9 +135,9 @@ const AddressModal = ({ isOpen, onClose, onSave, editingAddress }) => {
               </label>
               <input
                 type="text"
-                id="zip"
-                name="zip"
-                value={formData.zip}
+                id="zip_code"
+                name="zip_code"
+                value={formData.zip_code}
                 onChange={handleChange}
                 className="form-input"
                 placeholder="Enter ZIP code"
@@ -150,9 +150,9 @@ const AddressModal = ({ isOpen, onClose, onSave, editingAddress }) => {
               </label>
               <input
                 type="text"
-                id="country"
-                name="country"
-                value={formData.country}
+                id="country_name"
+                name="country_name"
+                value={formData.country_name}
                 onChange={handleChange}
                 className="form-input"
                 placeholder="Enter country"
@@ -163,14 +163,14 @@ const AddressModal = ({ isOpen, onClose, onSave, editingAddress }) => {
           <div className="form-field-checkbox">
             <input
               type="checkbox"
-              id="isDefault"
-              name="isDefault"
-              checked={formData.isDefault}
+              id="is_active"
+              name="is_active"
+              checked={formData.is_active}
               onChange={handleChange}
               className="form-checkbox"
             />
-            <label htmlFor="isDefault" className="form-label-checkbox">
-              Set as default address
+            <label htmlFor="is_active" className="form-label-checkbox">
+              Active Address
             </label>
           </div>
         </div>

@@ -1,40 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./profilePage.css";
 import AddressCard from "../../components/AddressCard/AddressCard";
 import AddressModal from "../../components/AddressModal/AddressModal";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useGetProfileQuery, useUpdateProfileMutation, useLogoutMutation } from "../../store/api/authApi";
+import { logout as logoutAction } from "../../store/slices/authSlice";
 
 const ProfilePage = () => {
+  const { data: userData, isLoading, isError } = useGetProfileQuery();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const [logoutApi] = useLogoutMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [profile, setProfile] = useState({
-    firstName: "Sophia",
-    lastName: "Davis",
-    phoneNumber: "+91 770999999",
-    email: "sophia.davis@example.com",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    email: "",
     avatar: "https://picsum.photos/seed/user123/200/200",
     status: "Active",
   });
 
-  const [addresses, setAddresses] = useState([
-    {
-      id: "1",
-      type: "Home",
-      isDefault: true,
-      addressLine1: "4517 Washington Ave.",
-      city: "Manchester",
-      state: "Kentucky",
-      zip: "39495",
-      country: "United States",
-    },
-    {
-      id: "2",
-      type: "Work",
-      isDefault: false,
-      addressLine1: "2464 Royal Ln. Mesa",
-      city: "New Jersey",
-      state: "NJ",
-      zip: "45463",
-      country: "United States",
-    },
-  ]);
+  const [addresses, setAddresses] = useState([]);
+  const [initialData, setInitialData] = useState(null);
+  const [isChanged, setIsChanged] = useState(false);
+
+  useEffect(() => {
+    if (userData) {
+      const formattedProfile = {
+        firstName: userData.first_name || "",
+        lastName: userData.last_name || "",
+        phoneNumber: userData.phone_number || "",
+        email: userData.email || "",
+        avatar: userData.avatar || "https://picsum.photos/seed/user123/200/200",
+        status: userData.deleted_at ? "Inactive" : "Active",
+      };
+      setProfile(formattedProfile);
+      setAddresses(userData.addresses || []);
+      setInitialData({ profile: formattedProfile, addresses: userData.addresses || [] });
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (initialData) {
+      const currentData = { profile, addresses };
+      const hasChanged = JSON.stringify(currentData) !== JSON.stringify(initialData);
+      setIsChanged(hasChanged);
+    }
+  }, [profile, addresses, initialData]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
@@ -62,14 +77,12 @@ const ProfilePage = () => {
 
   const handleSaveAddress = (formData) => {
     if (editingAddress) {
-      // Update existing address
       setAddresses((prev) =>
         prev.map((addr) =>
           addr.id === editingAddress.id ? { ...formData, id: addr.id } : addr
         )
       );
     } else {
-      // Add new address
       const newAddress = {
         ...formData,
         id: Date.now().toString(),
@@ -83,6 +96,36 @@ const ProfilePage = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingAddress(null);
+  };
+
+  const handleCancel = () => {
+    setProfile(initialData.profile);
+    setAddresses(initialData.addresses);
+  };
+
+  const handleSaveAllChanges = async () => {
+    try {
+      const updateData = {
+        first_name: profile.firstName,
+        last_name: profile.lastName,
+        phone_number: profile.phoneNumber,
+        email: profile.email,
+        addresses: addresses.map((addr) => ({
+          ...(addr.id && addr.id.length === 36 ? { id: addr.id } : {}),
+          address_type: addr.address_type,
+          street_address: addr.street_address,
+          city: addr.city,
+          state: addr.state,
+          zip_code: addr.zip_code,
+          country_name: addr.country_name,
+          is_active: addr.is_active !== undefined ? addr.is_active : true,
+        })),
+      };
+      await updateProfile(updateData).unwrap();
+      alert("Profile updated successfully!");
+    } catch (err) {
+      alert("Failed to update profile: " + (err.data?.message || err.message));
+    }
   };
 
   const handleChangeAvatar = (e) => {
@@ -102,6 +145,24 @@ const ProfilePage = () => {
     }
   };
 
+  const handleLogout = async () => {
+    if (window.confirm("Are you sure you want to logout?")) {
+      try {
+        await logoutApi().unwrap();
+        dispatch(logoutAction());
+        navigate("/login");
+      } catch (err) {
+        console.error("Logout failed:", err);
+        // Even if API fails, we should clear local state
+        dispatch(logoutAction());
+        navigate("/login");
+      }
+    }
+  };
+
+  if (isLoading) return <div className="loading-container">Loading...</div>;
+  if (isError) return <div className="error-container">Error loading profile details.</div>;
+
   return (
     <div className="settings-container">
       <div className="settings-header">
@@ -111,10 +172,14 @@ const ProfilePage = () => {
             Manage your profile details and saved locations.
           </p>
         </div>
-        <div className="settings-actions">
-          <button className="cancel-button">Cancel</button>
-          <button className="save-button">Save Changes</button>
-        </div>
+        {isChanged && (
+          <div className="settings-actions">
+            <button className="cancel-button" onClick={handleCancel}>Cancel</button>
+            <button className="save-button" onClick={handleSaveAllChanges} disabled={isUpdating}>
+              {isUpdating ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="settings-content">
@@ -127,7 +192,7 @@ const ProfilePage = () => {
                 <div className="avatar-container">
                   <img
                     src={profile.avatar}
-                    alt="Sophia Davis"
+                    alt={profile.firstName}
                     className="avatar-image"
                   />
                 </div>
@@ -145,7 +210,6 @@ const ProfilePage = () => {
                   </span>
                 </div>
                 <p className="profile-email">{profile.email}</p>
-                {/* Hidden file input */}
                 <input
                   type="file"
                   id="avatarInput"
@@ -168,6 +232,12 @@ const ProfilePage = () => {
                     onClick={handleRemoveAvatar}
                   >
                     Remove
+                  </button>
+                </div>
+                <div className="profile-logout-section">
+                  <button className="logout-button-profile" onClick={handleLogout}>
+                    <span className="material-symbols-outlined">logout</span>
+                    Logout
                   </button>
                 </div>
               </div>
@@ -272,7 +342,6 @@ const ProfilePage = () => {
               />
             ))}
 
-            {/* Add New Placeholder Card */}
             <button className="add-address-card" onClick={handleAddNewAddress}>
               <div className="add-address-icon">
                 <span className="material-symbols-outlined">add_location</span>

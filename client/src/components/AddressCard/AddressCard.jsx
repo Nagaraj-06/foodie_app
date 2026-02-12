@@ -5,18 +5,18 @@ const AddressCard = ({ address, onEdit, onDelete }) => {
   return (
     <div className="address-card">
       <div className="address-card-header">
-        <div className="address-type-badge">{address.type}</div>
-        {address.isDefault && (
-          <span className="address-default-badge">Default</span>
+        <div className="address-type-badge">{address.address_type}</div>
+        {address.is_active && (
+          <span className="address-default-badge">Active</span>
         )}
       </div>
 
       <div className="address-details">
-        <p className="address-line-main">{address.addressLine1}</p>
+        <p className="address-line-main">{address.street_address}</p>
         <p className="address-line-secondary">
-          {address.city}, {address.state} {address.zip}
+          {address.city}, {address.state} {address.zip_code}
         </p>
-        <p className="address-line-secondary">{address.country}</p>
+        <p className="address-line-secondary">{address.country_name}</p>
       </div>
 
       <div className="address-card-actions">

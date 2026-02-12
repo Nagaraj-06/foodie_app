@@ -37,7 +37,6 @@ services:
       - "6379:6379"
     restart: always
 
-
   gateway:
     image: nginx:latest
     container_name: gateway

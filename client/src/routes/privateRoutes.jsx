@@ -8,22 +8,27 @@ const privateRoutes = [
   {
     path: "business_register",
     element: <BusinessRegister />,
+    roles: ["restaurant_owner"],
   },
   {
     path: "add_menu_item",
     element: <AddMenuItem />,
+    roles: ["restaurant_owner"],
   },
   {
     path: "profile",
     element: <ProfilePage />,
+    roles: ["customer"],
   },
   {
     path: "dashboard",
     element: <DashboardBackground />,
+    // dashboard might be for both with different views, but for now leave open or restricted
   },
   {
     path: "business_profile",
     element: <BusinessDetailsPage />,
+    roles: ["restaurant_owner"],
   },
 ];
 

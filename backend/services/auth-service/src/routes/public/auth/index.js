@@ -14,7 +14,9 @@ const {
   googleLogin,
   refreshToken,
   registerRestaurant,
+  getRoles,
 } = require("../../../controller/auth");
+const { googleLoginService } = require("../../../services/auth.service");
 const validate = require("../../../middlewares/validate.middleware");
 const upload = require("../../../middlewares/upload.middleware");
 const router = express.Router();
@@ -130,6 +132,76 @@ router.post("/verify-otp", validate(verifyOtpSchema), verifyOtp);
  */
 router.post("/google-login", validate(googleLoginSchema), googleLogin);
 
+/**
+ * @swagger
+ * /roles:
+ *   get:
+ *     summary: Fetch active roles
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Roles fetched
+ */
+router.get("/roles", getRoles);
+
+// Passport Google OAuth Routes
+router.get(
+  "/google",
+  (req, res, next) => {
+    const { role_id } = req.query;
+    require("passport").authenticate("google", {
+      scope: ["email", "profile"],
+      state: role_id
+    })(req, res, next);
+  }
+);
+
+router.get(
+  "/google/callback",
+  require("passport").authenticate("google", {
+    session: false,
+    failureRedirect: "http://localhost:5173/login?error=oauth_failed",
+  }),
+  async (req, res) => {
+    try {
+      const { email, displayName } = req.user;
+      const { state: role_id } = req.query;
+
+      if (!role_id) {
+        throw new Error("Role ID is missing from OAuth state");
+      }
+
+      const { user, accessToken, refreshToken } = await googleLoginService(
+        email,
+        displayName,
+        role_id
+      );
+
+      // Set cookies (same as verify-otp logic)
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: false, // Set to true in production
+        sameSite: "Lax",
+        maxAge: 15 * 60 * 1000,
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false, // Set to true in production
+        sameSite: "Lax",
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+
+      // Redirect to frontend dashboard or home
+      // We can also pass a flag that login was successful
+      res.redirect(`http://localhost:5173/auth-success?token=${accessToken}`);
+    } catch (err) {
+      console.error("Google Auth Error:", err);
+      res.redirect(`http://localhost:5173/login?error=${encodeURIComponent(err.message)}`);
+    }
+  }
+);
+
 // tokens
 /**
  * @swagger
@@ -153,6 +225,8 @@ router.post("/refresh-token", refreshToken);
  *       200:
  *         description: Logged out
  */
-router.post("/logout", logout);
+const authMiddleware = require("../../../middlewares/auth.middleware");
+
+router.post("/logout", authMiddleware(), logout);
 
 module.exports = router;

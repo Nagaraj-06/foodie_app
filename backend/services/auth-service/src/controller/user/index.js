@@ -2,9 +2,20 @@ const {
   updateUserProfileSchema,
 } = require("../../routes/private/users/schema");
 const {
+  getUserProfile,
   updateUser,
   updateRestaurant,
 } = require("../../services/user.service");
+
+async function getProfile(req, res) {
+  try {
+    const user_id = req.user.user_id;
+    const profile = await getUserProfile(user_id);
+    res.json(profile);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
 
 async function updateUserProfile(req, res) {
   const { error, value } = updateUserProfileSchema.validate(req.body);
@@ -26,5 +37,6 @@ async function updateUserProfile(req, res) {
 }
 
 module.exports = {
+  getProfile,
   updateUserProfile,
 };

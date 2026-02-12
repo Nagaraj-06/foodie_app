@@ -227,6 +227,68 @@
   margin-bottom: 16px;
 }
 
+.business-info-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.business-logout-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.business-logout-button:hover {
+  background-color: #fecaca;
+}
+
+.verified-badge-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ecfdf5;
+  color: #059669;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #10b98133;
+}
+
+.bank-verify-action {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.bank-verify-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bank-verify-button:hover {
+  background-color: #2563eb;
+}
+
 .pic-actions {
   display: flex;
   align-items: center;
@@ -330,7 +392,7 @@
 
 .locked-badge {
   padding: 2px 8px;
-  background-color: #fef3c7;
+  background-color: #f1f5f9;
   color: #d97706;
   font-size: 10px;
   font-weight: 700;
@@ -384,10 +446,10 @@
 
 .locked-input {
   padding-left: 48px;
-  background-color: #fef3c7;
-  border-color: #fde68a;
+  background-color: #f1f5f9;
+  border-color: #e5e7eb;
   cursor: not-allowed;
-  color: #92400e;
+  color: #6b7280;
 }
 
 /* Location Input */
@@ -409,6 +471,10 @@
 .location-input {
   padding-left: 48px;
   flex: 1;
+}
+
+.phone-input {
+  padding-left: 48px;
 }
 
 .verify-button {
@@ -462,7 +528,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background-color: #fef3c7;
+  background-color: #f1f5f9;
   color: #d97706;
   font-size: 12px;
   font-weight: 700;
@@ -493,7 +559,7 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background-color: #fef3c7;
+  background-color: #f1f5f9;
   border: 1px solid #fde68a;
   border-radius: 16px;
 }
@@ -610,15 +676,19 @@
 .bank-form-input {
   width: 100%;
   height: 48px;
-  background-color: #fef3c7;
-  border: 1px solid #fde68a;
+  background-color: white;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 8px 16px 8px 48px;
   font-size: 14px;
   font-weight: 500;
   outline: none;
-  cursor: not-allowed;
-  color: #92400e;
+  transition: all 0.2s;
+}
+
+.bank-form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
 /* Material Icons */

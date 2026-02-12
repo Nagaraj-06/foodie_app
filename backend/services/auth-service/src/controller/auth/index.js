@@ -3,6 +3,7 @@ const {
   sendOtpService,
   verifyOtpService,
   googleLoginService,
+  getRolesService,
   refreshTokenService,
   logoutService,
 } = require("../../services/auth.service");
@@ -53,14 +54,14 @@ const verifyOtp = async (req, res) => {
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: false,
-      sameSite: "None",
+      sameSite: "Lax",
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
-      sameSite: "None",
+      sameSite: "Lax",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
@@ -87,15 +88,15 @@ const googleLogin = async (req, res) => {
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: false,
+      sameSite: "Lax",
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: false,
+      sameSite: "Lax",
       maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
@@ -113,14 +114,10 @@ const refreshToken = async (req, res) => {
     const { user_id } = jwt.decode(token);
     const data = await refreshTokenService(user_id, token);
 
-    res.cookie("accessToken", data.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "None",
-      maxAge: 15 * 60 * 1000,
+    res.json({
+      message: "Token refreshed",
+      accessToken: data.accessToken
     });
-
-    res.json({ message: "Token refreshed" });
   } catch (err) {
     res.status(401).json({ message: err.message });
   }
@@ -155,11 +152,21 @@ const registerRestaurant = async (req, res) => {
   }
 };
 
+const getRoles = async (req, res) => {
+  try {
+    const roles = await getRolesService();
+    res.json(roles);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 module.exports = {
   signIn,
   sendOtp,
   verifyOtp,
   googleLogin,
+  getRoles,
   refreshToken,
   logout,
   registerRestaurant,

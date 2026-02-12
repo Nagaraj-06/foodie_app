@@ -1,6 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../../../middlewares/auth.middleware");
-const { updateUserProfile } = require("../../../controller/user");
+const { getProfile, updateUserProfile } = require("../../../controller/user");
 const {
     updateUserProfileSchema,
 } = require("./schema");
@@ -9,6 +9,20 @@ const validate = require("../../../middlewares/validate.middleware");
 const router = express.Router();
 
 router.use(authMiddleware());
+
+/**
+ * @swagger
+ * /private/api/users/profile:
+ *   get:
+ *     summary: Get user profile
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Profile data
+ */
+router.get("/profile", getProfile);
 
 /**
  * @swagger

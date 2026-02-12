@@ -11,7 +11,7 @@ const usersRoutes = require("./private/users");
 const RestaurantRoutes = require("./private/restaurant");
 
 router.use("/public/api/auth", rateLimiter, authRoutes);
-router.use("/private/api/user", rateLimiter, usersRoutes);
+router.use("/private/api/users", rateLimiter, usersRoutes);
 
 router.use("/private/api/restaurant", rateLimiter, RestaurantRoutes);
 

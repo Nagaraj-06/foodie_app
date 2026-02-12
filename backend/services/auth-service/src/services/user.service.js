@@ -1,34 +1,119 @@
 const { prisma } = require("@foodie-app/prisma-client");
 
+async function getUserProfile(user_id) {
+  return await prisma.users.findUnique({
+    where: { id: user_id },
+    include: {
+      addresses: {
+        where: { is_active: true },
+        orderBy: { created_at: "desc" },
+      },
+      role: true,
+      restaurants: {
+        include: {
+          restaurant_bank_details: true,
+          restaurant_documents: true,
+        },
+      },
+    },
+  });
+}
+
 async function updateUser(user_id, data) {
-  const { address, ...userData } = data;
+  const { addresses, ...userData } = data;
 
   const updateData = {
     ...userData,
   };
 
-  if (address) {
-    // Check if an identical address already exists for this user
-    const existingAddress = await prisma.addresses.findFirst({
-      where: {
-        user_id: user_id,
-        address_type: address.address_type,
-        street_address: address.street_address,
-        city: address.city,
-        state: address.state,
-        zip_code: address.zip_code,
-        country_name: address.country_name,
-        is_active: true,
-      },
+  if (addresses) {
+    // 1. Fetch current active addresses from DB
+    const currentActiveAddresses = await prisma.addresses.findMany({
+      where: { user_id, is_active: true },
     });
 
-    if (!existingAddress) {
-      updateData.addresses = {
-        create: {
-          ...address,
-        },
-      };
+    const incomingIds = addresses
+      .filter((addr) => addr.id && addr.id.length === 36) // Simple check for UUID length
+      .map((addr) => addr.id);
+
+    // 2. Identify addresses to deactivate (soft-delete)
+    const toDeactivate = currentActiveAddresses
+      .filter((addr) => !incomingIds.includes(addr.id))
+      .map((addr) => addr.id);
+
+    if (toDeactivate.length > 0) {
+      await prisma.addresses.updateMany({
+        where: { id: { in: toDeactivate } },
+        data: { is_active: false, deleted_at: new Date() },
+      });
     }
+
+    // 3. Process incoming addresses (create or update)
+    for (const addr of addresses) {
+      const { id, ...addressData } = addr;
+
+      if (id && id.length === 36) {
+        // Update existing
+        await prisma.addresses.update({
+          where: { id },
+          data: { ...addressData, is_active: true, deleted_at: null },
+        });
+      } else {
+        // Create new
+        await prisma.addresses.create({
+          data: {
+            ...addressData,
+            user_id,
+            is_active: true,
+          },
+        });
+      }
+    }
+  }
+
+  if (userData.restaurant_name) {
+    await prisma.restaurants.upsert({
+      where: { owner_user_id: user_id },
+      update: { restaurant_name: userData.restaurant_name },
+      create: {
+        owner_user_id: user_id,
+        restaurant_name: userData.restaurant_name,
+        verification_status: false
+      },
+    });
+    delete updateData.restaurant_name; // Remove from user table update data
+  }
+
+  // Handle Bank Details update
+  if (userData.account_number || userData.account_holder_name || userData.ifsc_code || userData.bank_name) {
+    const restaurant = await prisma.restaurants.findUnique({
+      where: { owner_user_id: user_id },
+    });
+
+    if (restaurant) {
+      await prisma.restaurant_bank_details.upsert({
+        where: { restaurant_id: restaurant.id },
+        update: {
+          account_holder_name: userData.account_holder_name,
+          account_number: userData.account_number,
+          ifsc_code: userData.ifsc_code,
+          bank_name: userData.bank_name,
+        },
+        create: {
+          restaurant_id: restaurant.id,
+          account_holder_name: userData.account_holder_name || "",
+          account_number: userData.account_number || "",
+          ifsc_code: userData.ifsc_code || "",
+          bank_name: userData.bank_name || "",
+        },
+      });
+    }
+
+    // Clean up updateData
+    delete updateData.account_holder_name;
+    delete updateData.account_number;
+    delete updateData.ifsc_code;
+    delete updateData.bank_name;
   }
 
   return await prisma.users.update({
@@ -37,7 +122,9 @@ async function updateUser(user_id, data) {
     },
     data: updateData,
     include: {
-      addresses: true,
+      addresses: {
+        where: { is_active: true },
+      },
     },
   });
 }
@@ -54,4 +141,4 @@ async function updateRestaurant(ownerUserId, data) {
   });
 }
 
-module.exports = { updateUser, updateRestaurant };
+module.exports = { getUserProfile, updateUser, updateRestaurant };

@@ -3,6 +3,8 @@ import "./BusinessRegister.css";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import { useNavigate } from "react-router-dom";
+import { useGetProfileQuery, useUpdateProfileMutation } from "../../store/api/authApi";
 import MapPicker from "../../components/MapPicker/MapPicker";
 
 // Google Maps API Key from .env
@@ -47,27 +49,42 @@ const BusinessRegister = () => {
     }
   };
 
+  const { data: userData } = useGetProfileQuery();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
-    // Business Info
-    businessName: "",
-    phone: "",
-    location: "123 Market St, San Francisco, CA",
-
-    // Owner Info
-    ownerName: "",
-    email: "",
-
-    // Bank Details
-    accountHolder: "",
-    ifsc: "",
-    accountNumber: "",
-    bankName: "",
-
-    // File Uploads
+    businessName: userData?.restaurants?.[0]?.restaurant_name || "",
+    phone: userData?.phone_number || "",
+    location: userData?.restaurants?.[0]?.address?.address_line_1 || "",
+    ownerName: userData?.first_name || "",
+    email: userData?.email || "",
+    accountHolder: userData?.restaurants?.[0]?.restaurant_bank_details?.[0]?.account_holder_name || "",
+    ifsc: userData?.restaurants?.[0]?.restaurant_bank_details?.[0]?.ifsc_code || "",
+    accountNumber: userData?.restaurants?.[0]?.restaurant_bank_details?.[0]?.account_number || "",
+    bankName: userData?.restaurants?.[0]?.restaurant_bank_details?.[0]?.bank_name || "",
     fssai: null,
     pan: null,
     gst: null,
   });
+
+  // Sync form if userData loads later
+  React.useEffect(() => {
+    if (userData) {
+      setForm(prev => ({
+        ...prev,
+        businessName: userData.restaurants?.[0]?.restaurant_name || prev.businessName,
+        phone: userData.phone_number || prev.phone,
+        location: userData.restaurants?.[0]?.address?.address_line_1 || prev.location,
+        ownerName: userData.first_name || prev.ownerName,
+        email: userData.email || prev.email,
+        accountHolder: userData.restaurants?.[0]?.restaurant_bank_details?.[0]?.account_holder_name || prev.accountHolder,
+        ifsc: userData.restaurants?.[0]?.restaurant_bank_details?.[0]?.ifsc_code || prev.ifsc,
+        accountNumber: userData.restaurants?.[0]?.restaurant_bank_details?.[0]?.account_number || prev.accountNumber,
+        bankName: userData.restaurants?.[0]?.restaurant_bank_details?.[0]?.bank_name || prev.bankName,
+      }));
+    }
+  }, [userData]);
 
   const handleLocationConfirm = (address, position) => {
     setForm((prev) => ({ ...prev, location: address }));
@@ -82,10 +99,25 @@ const BusinessRegister = () => {
     setForm({ ...form, [e.target.name]: e.target.files[0] });
   }
 
-  function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
-  }
+    try {
+      await updateProfile({
+        first_name: form.ownerName,
+        email: form.email,
+        phone_number: form.phone,
+        restaurant_name: form.businessName,
+        account_holder_name: form.accountHolder,
+        account_number: form.accountNumber,
+        ifsc_code: form.ifsc,
+        bank_name: form.bankName,
+      }).unwrap();
+      navigate("/business_profile");
+    } catch (err) {
+      console.error("Failed to register business:", err);
+      alert("Failed to register business. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -168,7 +200,7 @@ const BusinessRegister = () => {
               isOpen={isMapOpen}
               onClose={() => setIsMapOpen(false)}
               onConfirm={handleLocationConfirm}
-              googleMapsApiKey={GOOGLE_MAPS_API_KEY}
+              googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
             />
 
             <div className="docs-section">

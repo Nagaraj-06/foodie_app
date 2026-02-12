@@ -1,65 +1,129 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./BusinessDetailsPage.css";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useGetProfileQuery, useUpdateProfileMutation, useLogoutMutation } from "../../store/api/authApi";
+import { logout as logoutAction } from "../../store/slices/authSlice";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import MapPicker from "../../components/MapPicker/MapPicker";
 
 const BusinessDetailsPage = () => {
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const { data: userData, isLoading, isError } = useGetProfileQuery();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+  const [logoutApi] = useLogoutMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [businessDetails, setBusinessDetails] = useState({
-    businessName: "Spicy House Restaurant",
-    ownerName: "Rajesh Kumar",
+    businessName: "",
+    ownerName: "",
     restaurantPic: "https://picsum.photos/seed/restaurant123/200/200",
-    phoneNumber: "+91 9876543210",
-    email: "spicyhouse@example.com",
-    location: "123 MG Road, Bangalore, Karnataka 560001",
-    locationVerified: true,
-    fssaiLicense: "12345678901234",
-    panCard: "ABCDE1234F",
-    gstNumber: "29ABCDE1234F1Z5",
-    accountHolderName: "Rajesh Kumar",
-    accountNumber: "1234567890123456",
-    ifscCode: "HDFC0001234",
-    bankName: "HDFC Bank",
-    status: "Verified",
+    phoneNumber: "",
+    email: "",
+    location: "",
+    locationVerified: false,
+    fssaiLicense: "",
+    panCard: "",
+    gstNumber: "",
+    accountHolderName: "",
+    accountNumber: "",
+    ifscCode: "",
+    bankName: "",
+    status: "Pending",
+    bankVerified: false,
   });
 
+  const handleLocationConfirm = (address, position) => {
+    setBusinessDetails((prev) => ({ ...prev, location: address }));
+    setIsMapOpen(false);
+    setIsChanged(true);
+  };
+
+  const [initialData, setInitialData] = useState(null);
+  const [isChanged, setIsChanged] = useState(false);
   const [isLocationEditing, setIsLocationEditing] = useState(false);
-  const [tempLocation, setTempLocation] = useState(businessDetails.location);
+  const [tempLocation, setTempLocation] = useState("");
+  const [isBankEditing, setIsBankEditing] = useState(false);
+
+  useEffect(() => {
+    if (userData) {
+      console.log("User Data loaded:", userData);
+      const restaurant = userData.restaurants?.[0] || {};
+      const bank = restaurant.restaurant_bank_details?.[0] || {};
+
+      const firstName = userData.first_name || "";
+      const lastName = userData.last_name || "";
+      const fullName = `${firstName} ${lastName}`.trim() || userData.email?.split('@')[0] || "Business Owner";
+
+      const formattedData = {
+        businessName: restaurant.restaurant_name || "",
+        ownerName: fullName,
+        restaurantPic: restaurant.photo || "https://picsum.photos/seed/restaurant123/200/200",
+        phoneNumber: userData.phone_number || "",
+        email: userData.email || "",
+        location: restaurant.address?.street_address || "Click to add address",
+        locationVerified: restaurant.verification_status || false,
+        fssaiLicense: "",
+        panCard: "",
+        gstNumber: "",
+        accountHolderName: bank.account_holder_name || "",
+        accountNumber: bank.account_number || "",
+        ifscCode: bank.ifsc_code || "",
+        bankName: bank.bank_name || "",
+        status: restaurant.is_active ? "Verified" : "Pending",
+        bankVerified: bank.is_verified || false,
+      };
+      setBusinessDetails(formattedData);
+      setInitialData(formattedData);
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (initialData) {
+      const hasChanged = JSON.stringify(businessDetails) !== JSON.stringify(initialData);
+      setIsChanged(hasChanged);
+    }
+  }, [businessDetails, initialData]);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
     setBusinessDetails((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleChangeRestaurantPic = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setBusinessDetails((prev) => ({
-          ...prev,
-          restaurantPic: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
+  const handleLogout = async () => {
+    if (window.confirm("Are you sure you want to logout?")) {
+      try {
+        await logoutApi().unwrap();
+        dispatch(logoutAction());
+        navigate("/login");
+      } catch (err) {
+        dispatch(logoutAction());
+        navigate("/login");
+      }
     }
   };
 
-  const handleRemoveRestaurantPic = () => {
-    if (
-      window.confirm("Are you sure you want to remove the restaurant picture?")
-    ) {
-      setBusinessDetails((prev) => ({ ...prev, restaurantPic: "" }));
+  const handleSaveAllChanges = async () => {
+    try {
+      await updateProfile({
+        restaurant_name: businessDetails.businessName,
+        phone_number: businessDetails.phoneNumber,
+        account_holder_name: businessDetails.accountHolderName,
+        account_number: businessDetails.accountNumber,
+        ifsc_code: businessDetails.ifscCode,
+        bank_name: businessDetails.bankName,
+      }).unwrap();
+      alert("Business details submitted for verification!");
+      setInitialData(businessDetails);
+      setIsChanged(false);
+    } catch (err) {
+      alert("Failed to submit: " + (err.data?.message || err.message));
     }
   };
 
-  const handleVerifyLocation = () => {
-    // Simulate location verification
-    setBusinessDetails((prev) => ({
-      ...prev,
-      location: tempLocation,
-      locationVerified: true,
-    }));
-    setIsLocationEditing(false);
-    alert("Location verified successfully!");
-  };
+  if (isLoading) return <div className="loading-container">Loading...</div>;
+  if (isError) return <div className="error-container">Error loading profile</div>;
 
   return (
     <div className="business-container">
@@ -71,8 +135,10 @@ const BusinessDetailsPage = () => {
           </p>
         </div>
         <div className="business-actions">
-          <button className="business-cancel-button">Cancel</button>
-          <button className="business-save-button">Save Changes</button>
+          <button className="business-cancel-button" onClick={() => setBusinessDetails(initialData)} disabled={!isChanged}>Cancel</button>
+          <button className="business-save-button" onClick={handleSaveAllChanges} disabled={!isChanged || isUpdating}>
+            {isUpdating ? "Submitting..." : "Verify"}
+          </button>
         </div>
       </div>
 
@@ -103,31 +169,13 @@ const BusinessDetailsPage = () => {
                     {businessDetails.status}
                   </span>
                 </div>
-                <p className="owner-name-display">
-                  Owner: {businessDetails.ownerName}
-                </p>
-                <input
-                  type="file"
-                  id="restaurantPicInput"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleChangeRestaurantPic}
-                />
-                <div className="pic-actions">
-                  <button
-                    className="change-pic-button"
-                    onClick={() =>
-                      document.getElementById("restaurantPicInput").click()
-                    }
-                  >
-                    Change Picture
-                  </button>
-                  <span className="pic-separator">|</span>
-                  <button
-                    className="remove-pic-button"
-                    onClick={handleRemoveRestaurantPic}
-                  >
-                    Remove
+                <div className="business-info-meta">
+                  <p className="owner-name-display">
+                    Owner: {businessDetails.ownerName}
+                  </p>
+                  <button className="business-logout-button" onClick={handleLogout}>
+                    <span className="material-symbols-outlined">logout</span>
+                    Logout
                   </button>
                 </div>
               </div>
@@ -158,47 +206,50 @@ const BusinessDetailsPage = () => {
                 <label htmlFor="ownerName" className="business-form-label">
                   Owner Name
                 </label>
-                <input
-                  type="text"
-                  id="ownerName"
-                  value={businessDetails.ownerName}
-                  onChange={handleInputChange}
-                  className="business-form-input"
-                />
+                <div className="location-input-wrapper">
+                  <span className="material-symbols-outlined location-icon">
+                    person
+                  </span>
+                  <input
+                    type="text"
+                    id="ownerName"
+                    value={businessDetails.ownerName}
+                    onChange={handleInputChange}
+                    className="business-form-input phone-input"
+                  />
+                </div>
               </div>
               <div className="business-form-field">
                 <label htmlFor="phoneNumber" className="business-form-label">
                   Phone Number
-                  <span className="locked-badge">Locked</span>
                 </label>
-                <div className="locked-input-wrapper">
-                  <span className="material-symbols-outlined locked-icon">
-                    lock
+                <div className="location-input-wrapper">
+                  <span className="material-symbols-outlined location-icon">
+                    phone
                   </span>
                   <input
                     type="tel"
                     id="phoneNumber"
                     value={businessDetails.phoneNumber}
-                    readOnly
-                    className="business-form-input locked-input"
+                    onChange={handleInputChange}
+                    className="business-form-input phone-input"
                   />
                 </div>
               </div>
               <div className="business-form-field">
                 <label htmlFor="email" className="business-form-label">
                   Email Address
-                  <span className="locked-badge">Locked</span>
                 </label>
-                <div className="locked-input-wrapper">
-                  <span className="material-symbols-outlined locked-icon">
-                    lock
+                <div className="location-input-wrapper">
+                  <span className="material-symbols-outlined location-icon">
+                    mail
                   </span>
                   <input
                     type="email"
                     id="email"
                     value={businessDetails.email}
-                    readOnly
-                    className="business-form-input locked-input"
+                    onChange={handleInputChange}
+                    className="business-form-input phone-input"
                   />
                 </div>
               </div>
@@ -209,104 +260,35 @@ const BusinessDetailsPage = () => {
                     <span className="verified-badge">Verified</span>
                   )}
                 </label>
-                <div className="location-input-wrapper">
-                  <span className="material-symbols-outlined location-icon">
-                    location_on
-                  </span>
-                  <input
-                    type="text"
-                    id="location"
-                    value={
-                      isLocationEditing
-                        ? tempLocation
-                        : businessDetails.location
-                    }
-                    onChange={(e) => {
-                      setTempLocation(e.target.value);
-                      setIsLocationEditing(true);
-                    }}
-                    className="business-form-input location-input"
-                  />
-                  {isLocationEditing && (
+                <div>
+                  <span className="location-input">
+                    <LocationOnIcon className="location-pin-icon" />
+                    <div className="location-section">
+                      <h4>Location/address on the map</h4>
+                      <p className="location-text-display">
+                        {businessDetails.location || "Choose location on map"}
+                      </p>
+                    </div>
                     <button
-                      className="verify-button"
-                      onClick={handleVerifyLocation}
+                      type="button"
+                      className="location-change-btn"
+                      onClick={() => setIsMapOpen(true)}
                     >
-                      Verify
+                      Change
                     </button>
-                  )}
+                  </span>
+                  {/* Map Picker Modal */}
+                  <MapPicker
+                    isOpen={isMapOpen}
+                    onClose={() => setIsMapOpen(false)}
+                    onConfirm={handleLocationConfirm}
+                    googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+                  />
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Legal Documents Card */}
-        {/* <div className="legal-documents-card">
-          <div className="documents-header">
-            <div>
-              <h3 className="documents-title">Legal Documents</h3>
-              <p className="documents-subtitle">
-                Your registered business documents.
-              </p>
-            </div>
-            <span className="locked-section-badge">
-              <span className="material-symbols-outlined">lock</span>
-              Read Only
-            </span>
-          </div>
-
-          <div className="documents-grid">
-            <div className="document-item">
-              <div className="document-icon-wrapper">
-                <span className="material-symbols-outlined document-icon">
-                  description
-                </span>
-              </div>
-              <div className="document-details">
-                <label className="document-label">FSSAI License</label>
-                <input
-                  type="text"
-                  value={businessDetails.fssaiLicense}
-                  readOnly
-                  className="document-input"
-                />
-              </div>
-            </div>
-            <div className="document-item">
-              <div className="document-icon-wrapper">
-                <span className="material-symbols-outlined document-icon">
-                  badge
-                </span>
-              </div>
-              <div className="document-details">
-                <label className="document-label">PAN Card</label>
-                <input
-                  type="text"
-                  value={businessDetails.panCard}
-                  readOnly
-                  className="document-input"
-                />
-              </div>
-            </div>
-            <div className="document-item">
-              <div className="document-icon-wrapper">
-                <span className="material-symbols-outlined document-icon">
-                  receipt_long
-                </span>
-              </div>
-              <div className="document-details">
-                <label className="document-label">GST Number</label>
-                <input
-                  type="text"
-                  value={businessDetails.gstNumber}
-                  readOnly
-                  className="document-input"
-                />
-              </div>
-            </div>
-          </div>
-        </div> */}
 
         {/* Bank Account Details Card */}
         <div className="bank-details-card">
@@ -317,10 +299,12 @@ const BusinessDetailsPage = () => {
                 Your registered bank account information.
               </p>
             </div>
-            <span className="locked-section-badge">
-              <span className="material-symbols-outlined">lock</span>
-              Read Only
-            </span>
+            {businessDetails.bankVerified && (
+              <span className="verified-badge-section">
+                <span className="material-symbols-outlined">verified</span>
+                Verified
+              </span>
+            )}
           </div>
 
           <div className="bank-grid">
@@ -332,9 +316,14 @@ const BusinessDetailsPage = () => {
                 </span>
                 <input
                   type="text"
+                  id="accountHolderName"
                   value={businessDetails.accountHolderName}
-                  readOnly
-                  className="bank-form-input"
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setIsBankEditing(true);
+                  }}
+                  readOnly={businessDetails.bankVerified}
+                  className={`bank-form-input ${businessDetails.bankVerified ? "locked-input" : ""}`}
                 />
               </div>
             </div>
@@ -346,9 +335,14 @@ const BusinessDetailsPage = () => {
                 </span>
                 <input
                   type="text"
+                  id="accountNumber"
                   value={businessDetails.accountNumber}
-                  readOnly
-                  className="bank-form-input"
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setIsBankEditing(true);
+                  }}
+                  readOnly={businessDetails.bankVerified}
+                  className={`bank-form-input ${businessDetails.bankVerified ? "locked-input" : ""}`}
                 />
               </div>
             </div>
@@ -360,9 +354,14 @@ const BusinessDetailsPage = () => {
                 </span>
                 <input
                   type="text"
+                  id="ifscCode"
                   value={businessDetails.ifscCode}
-                  readOnly
-                  className="bank-form-input"
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setIsBankEditing(true);
+                  }}
+                  readOnly={businessDetails.bankVerified}
+                  className={`bank-form-input ${businessDetails.bankVerified ? "locked-input" : ""}`}
                 />
               </div>
             </div>
@@ -374,9 +373,14 @@ const BusinessDetailsPage = () => {
                 </span>
                 <input
                   type="text"
+                  id="bankName"
                   value={businessDetails.bankName}
-                  readOnly
-                  className="bank-form-input"
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    setIsBankEditing(true);
+                  }}
+                  readOnly={businessDetails.bankVerified}
+                  className={`bank-form-input ${businessDetails.bankVerified ? "locked-input" : ""}`}
                 />
               </div>
             </div>
