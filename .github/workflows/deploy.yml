@@ -19,5 +19,6 @@ jobs:
             cd ~/foodie_app
             git pull origin main
             cd backend
+            docker-compose down
             docker-compose build
             docker-compose up -d
