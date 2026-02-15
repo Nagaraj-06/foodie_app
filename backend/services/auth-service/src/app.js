@@ -17,7 +17,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // Passport
 require("./config/passport");
 const passport = require("passport");
