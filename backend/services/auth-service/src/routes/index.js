@@ -3,6 +3,11 @@ const router = express.Router();
 const rateLimiter = require("../middlewares/rateLimit.middleware");
 const { googleLogin } = require("../controller/auth");
 
+// Health check
+router.get("/health", (req, res) => {
+    res.json({ message: "Auth service is healthy" });
+});
+
 // Public routes
 const authRoutes = require("./public/auth");
 

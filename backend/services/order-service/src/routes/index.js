@@ -3,6 +3,11 @@ const router = express.Router();
 const authMiddleware = require("../middlewares/auth.middleware");
 const { addToCart, removeFromCart, placeOrder, getMyOrders, getRestaurantOrderHistory } = require("../controller/orders");
 
+// Health check
+router.get("/health", (req, res) => {
+    res.json({ message: "Order service is healthy" });
+});
+
 router.use(authMiddleware());
 
 /**
