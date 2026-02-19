@@ -281,7 +281,7 @@ const BusinessDetailsPage = () => {
                   <MapPicker
                     isOpen={isMapOpen}
                     onClose={() => setIsMapOpen(false)}
-                    onConfirm={handleLocationConfirm}
+                    onConfirm={handleLocationConfirm}passwor
                   />
                 </div>
               </div>
