@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useSendOtpMutation, useVerifyOtpMutation, useGetRolesQuery } from "../../store/api/authApi";
+import { useSendOtpMutation, useVerifyOtpMutation, useGetRolesQuery, useGetProfileQuery } from "../../store/api/authApi";
 import { setCredentials } from "../../store/slices/authSlice";
 
 export const LoginScreen = () => {
