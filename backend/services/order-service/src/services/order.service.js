@@ -245,3 +245,28 @@ exports.getRestaurantOrderHistory = async (ownerId, period = "month") => {
     }))
   };
 };
+exports.getUserCart = async (userId) => {
+  return await prisma.cart.findMany({
+    where: { user_id: userId },
+    include: {
+      variant: {
+        include: {
+          item: {
+            include: {
+              restaurant: true
+            }
+          }
+        }
+      }
+    }
+  });
+};
+
+module.exports = {
+  removeFromCart: exports.removeFromCart,
+  addToCart: exports.addToCart,
+  placeOrder: exports.placeOrder,
+  getUserOrders: exports.getUserOrders,
+  getRestaurantOrderHistory: exports.getRestaurantOrderHistory,
+  getUserCart: exports.getUserCart,
+};

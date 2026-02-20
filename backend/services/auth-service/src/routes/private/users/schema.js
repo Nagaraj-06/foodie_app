@@ -16,6 +16,7 @@ const updateUserProfileSchema = Joi.object({
   last_name: Joi.string().min(1).max(30).optional(),
   phone_number: Joi.string().min(10).max(15).optional(),
   email: Joi.string().email().max(100).optional(),
+  avatar: Joi.string().optional(),
   addresses: Joi.array().items(addressSchema).optional(),
   restaurant_name: Joi.string().max(100).optional(),
   account_holder_name: Joi.string().max(100).optional(),

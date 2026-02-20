@@ -72,13 +72,20 @@ async function updateUser(user_id, data) {
   }
 
   if (userData.restaurant_name) {
+    const currentRestaurant = await prisma.restaurants.findUnique({
+      where: { owner_user_id: user_id },
+    });
+
     await prisma.restaurants.upsert({
       where: { owner_user_id: user_id },
-      update: { restaurant_name: userData.restaurant_name },
+      update: {
+        restaurant_name: userData.restaurant_name,
+        verification_status: currentRestaurant?.verification_status === "REJECTED" ? "PENDING" : currentRestaurant?.verification_status
+      },
       create: {
         owner_user_id: user_id,
         restaurant_name: userData.restaurant_name,
-        verification_status: false
+        verification_status: "PENDING"
       },
     });
     delete updateData.restaurant_name; // Remove from user table update data
@@ -107,6 +114,14 @@ async function updateUser(user_id, data) {
           bank_name: userData.bank_name || "",
         },
       });
+
+      // If business was rejected, updating bank details should reset status to PENDING
+      if (restaurant.verification_status === "REJECTED") {
+        await prisma.restaurants.update({
+          where: { id: restaurant.id },
+          data: { verification_status: "PENDING" }
+        });
+      }
     }
 
     // Clean up updateData

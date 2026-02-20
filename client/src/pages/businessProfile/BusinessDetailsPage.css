@@ -212,13 +212,31 @@
 .business-status-badge {
   padding: 4px 10px;
   border-radius: 9999px;
-  background-color: #dcfce7;
-  border: 1px solid #bbf7d0;
-  color: #16a34a;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.business-status-badge.verified {
+  background-color: #dcfce7;
+  border-color: #bbf7d0;
+  color: #16a34a;
+}
+
+.business-status-badge.pending {
+  background-color: #fef9c3;
+  border-color: #fef08a;
+  color: #a16207;
+}
+
+.business-status-badge.rejected {
+  background-color: #fee2e2;
+  border-color: #fecaca;
+  color: #dc2626;
 }
 
 .owner-name-display {

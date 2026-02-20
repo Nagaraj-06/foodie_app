@@ -14,7 +14,7 @@ const publicRoutes = [
     element: <Hotels />,
   },
   {
-    path: "restaurants/:restaurantName",
+    path: "restaurants/:restaurantId",
     element: <Items />,
   },
   {
@@ -22,7 +22,7 @@ const publicRoutes = [
     element: <CartMain />,
   },
   {
-    path: "restaurants/:restaurantName/:itemName/variants",
+    path: "restaurants/:restaurantId/items/:itemId/variants",
     element: <VariantPage />,
   },
   {

@@ -49,20 +49,20 @@ const BusinessRegister = () => {
     }
   };
 
-  const { data: userData } = useGetProfileQuery();
+  const { data: userData, isLoading: isProfileLoading } = useGetProfileQuery();
   const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
-    businessName: userData?.restaurants?.[0]?.restaurant_name || "",
-    phone: userData?.phone_number || "",
-    location: userData?.restaurants?.[0]?.address?.address_line_1 || "",
-    ownerName: userData?.first_name || "",
-    email: userData?.email || "",
-    accountHolder: userData?.restaurants?.[0]?.restaurant_bank_details?.[0]?.account_holder_name || "",
-    ifsc: userData?.restaurants?.[0]?.restaurant_bank_details?.[0]?.ifsc_code || "",
-    accountNumber: userData?.restaurants?.[0]?.restaurant_bank_details?.[0]?.account_number || "",
-    bankName: userData?.restaurants?.[0]?.restaurant_bank_details?.[0]?.bank_name || "",
+    businessName: "",
+    phone: "",
+    location: "",
+    ownerName: "",
+    email: "",
+    accountHolder: "",
+    ifsc: "",
+    accountNumber: "",
+    bankName: "",
     fssai: null,
     pan: null,
     gst: null,
@@ -71,6 +71,12 @@ const BusinessRegister = () => {
   // Sync form if userData loads later
   React.useEffect(() => {
     if (userData) {
+      // If restaurant already exists, they shouldn't be here to "register" again
+      if (userData.restaurants && userData.restaurants.length > 0) {
+        navigate("/business_profile");
+        return;
+      }
+
       setForm(prev => ({
         ...prev,
         businessName: userData.restaurants?.[0]?.restaurant_name || prev.businessName,
@@ -84,7 +90,7 @@ const BusinessRegister = () => {
         bankName: userData.restaurants?.[0]?.restaurant_bank_details?.[0]?.bank_name || prev.bankName,
       }));
     }
-  }, [userData]);
+  }, [userData, navigate]);
 
   const handleLocationConfirm = (address, position) => {
     setForm((prev) => ({ ...prev, location: address }));
@@ -118,6 +124,8 @@ const BusinessRegister = () => {
       alert("Failed to register business. Please try again.");
     }
   };
+
+  if (isProfileLoading) return <div>Loading...</div>;
 
   return (
     <>

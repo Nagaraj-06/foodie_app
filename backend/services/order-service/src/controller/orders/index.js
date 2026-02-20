@@ -55,3 +55,12 @@ exports.getRestaurantOrderHistory = async (req, res) => {
     res.status(status).json({ success: false, message: err.message });
   }
 };
+
+exports.getCart = async (req, res) => {
+  try {
+    const cart = await orderService.getUserCart(req.user.user_id);
+    res.json({ success: true, data: cart });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

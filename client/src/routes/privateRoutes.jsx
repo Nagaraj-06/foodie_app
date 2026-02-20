@@ -1,7 +1,7 @@
 import DashboardBackground from "../components/DashboardBackground/DashboardBackground";
 import AddMenuItem from "../pages/addMenuItem/AddMenuItem";
 import BusinessDetailsPage from "../pages/businessProfile/BusinessDetailsPage";
-import BusinessRegister from "../pages/businessRegister/businessRegister";
+import BusinessRegister from "../pages/businessRegister/BusinessRegister";
 import ProfilePage from "../pages/profile/profilePage";
 
 const privateRoutes = [
@@ -18,7 +18,7 @@ const privateRoutes = [
   {
     path: "profile",
     element: <ProfilePage />,
-    roles: ["customer"],
+    roles: ["customer", "restaurant_owner"],
   },
   {
     path: "dashboard",

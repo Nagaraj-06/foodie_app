@@ -2,17 +2,15 @@ import React from "react";
 import "./ItemCard.css";
 import { useNavigate } from "react-router-dom";
 
-const ItemCard = ({ name, image, price, restaurantName }) => {
+const ItemCard = ({ id, name, image, price, restaurantId }) => {
   const navigate = useNavigate();
-  const encodedItemName = encodeURIComponent(name); // encode spaces, special chars
-  const encodedRestaurentName = encodeURIComponent(restaurantName); // encode spaces, special chars
 
   return (
     <div
       className="item-card"
       onClick={() =>
         navigate(
-          `/restaurants/${encodedRestaurentName}/${encodedItemName}/variants`
+          `/restaurants/${restaurantId}/items/${id}/variants`
         )
       }
     >

@@ -5,6 +5,58 @@
   min-height: 100vh;
 }
 
+.verification-notice {
+  background: white;
+  padding: 3rem;
+  border-radius: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 500px;
+  margin: 4rem auto;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.notice-icon {
+  font-size: 4rem !important;
+  color: #64748b;
+  margin-bottom: 1.5rem;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 50%;
+}
+
+.verification-notice h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.verification-notice p {
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.goto-profile-btn {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.goto-profile-btn:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
+}
+
 .header {
   background-color: white;
   padding: 1.5rem;

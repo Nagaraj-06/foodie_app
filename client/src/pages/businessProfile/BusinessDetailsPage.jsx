@@ -56,6 +56,12 @@ const BusinessDetailsPage = () => {
       const lastName = userData.last_name || "";
       const fullName = `${firstName} ${lastName}`.trim() || userData.email?.split('@')[0] || "Business Owner";
 
+      const getStatusLabel = (status) => {
+        if (status === "APPROVED") return "Verified";
+        if (status === "REJECTED") return "Rejected";
+        return "Pending";
+      };
+
       const formattedData = {
         businessName: restaurant.restaurant_name || "",
         ownerName: fullName,
@@ -63,7 +69,7 @@ const BusinessDetailsPage = () => {
         phoneNumber: userData.phone_number || "",
         email: userData.email || "",
         location: restaurant.address?.street_address || "Click to add address",
-        locationVerified: restaurant.verification_status || false,
+        locationVerified: restaurant.verification_status === "APPROVED",
         fssaiLicense: "",
         panCard: "",
         gstNumber: "",
@@ -71,7 +77,7 @@ const BusinessDetailsPage = () => {
         accountNumber: bank.account_number || "",
         ifscCode: bank.ifsc_code || "",
         bankName: bank.bank_name || "",
-        status: restaurant.is_active ? "Verified" : "Pending",
+        status: getStatusLabel(restaurant.verification_status),
         bankVerified: bank.is_verified || false,
       };
       setBusinessDetails(formattedData);
@@ -137,7 +143,7 @@ const BusinessDetailsPage = () => {
         <div className="business-actions">
           <button className="business-cancel-button" onClick={() => setBusinessDetails(initialData)} disabled={!isChanged}>Cancel</button>
           <button className="business-save-button" onClick={handleSaveAllChanges} disabled={!isChanged || isUpdating}>
-            {isUpdating ? "Submitting..." : "Verify"}
+            {isUpdating ? "Submitting..." : (businessDetails.status === "Rejected" ? "Resubmit Registration" : "Verify")}
           </button>
         </div>
       </div>
@@ -165,7 +171,7 @@ const BusinessDetailsPage = () => {
                   <h2 className="business-name">
                     {businessDetails.businessName}
                   </h2>
-                  <span className="business-status-badge">
+                  <span className={`business-status-badge ${businessDetails.status?.toLowerCase().replace(' ', '-')}`}>
                     {businessDetails.status}
                   </span>
                 </div>
@@ -281,7 +287,7 @@ const BusinessDetailsPage = () => {
                   <MapPicker
                     isOpen={isMapOpen}
                     onClose={() => setIsMapOpen(false)}
-                    onConfirm={handleLocationConfirm}passwor
+                    onConfirm={handleLocationConfirm} passwor
                   />
                 </div>
               </div>
@@ -321,8 +327,8 @@ const BusinessDetailsPage = () => {
                     handleInputChange(e);
                     setIsBankEditing(true);
                   }}
-                  readOnly={businessDetails.bankVerified}
-                  className={`bank-form-input ${businessDetails.bankVerified ? "locked-input" : ""}`}
+                  readOnly={businessDetails.bankVerified && businessDetails.status !== "Rejected"}
+                  className={`bank-form-input ${(businessDetails.bankVerified && businessDetails.status !== "Rejected") ? "locked-input" : ""}`}
                 />
               </div>
             </div>
@@ -340,8 +346,8 @@ const BusinessDetailsPage = () => {
                     handleInputChange(e);
                     setIsBankEditing(true);
                   }}
-                  readOnly={businessDetails.bankVerified}
-                  className={`bank-form-input ${businessDetails.bankVerified ? "locked-input" : ""}`}
+                  readOnly={businessDetails.bankVerified && businessDetails.status !== "Rejected"}
+                  className={`bank-form-input ${(businessDetails.bankVerified && businessDetails.status !== "Rejected") ? "locked-input" : ""}`}
                 />
               </div>
             </div>
@@ -359,8 +365,8 @@ const BusinessDetailsPage = () => {
                     handleInputChange(e);
                     setIsBankEditing(true);
                   }}
-                  readOnly={businessDetails.bankVerified}
-                  className={`bank-form-input ${businessDetails.bankVerified ? "locked-input" : ""}`}
+                  readOnly={businessDetails.bankVerified && businessDetails.status !== "Rejected"}
+                  className={`bank-form-input ${(businessDetails.bankVerified && businessDetails.status !== "Rejected") ? "locked-input" : ""}`}
                 />
               </div>
             </div>
@@ -378,8 +384,8 @@ const BusinessDetailsPage = () => {
                     handleInputChange(e);
                     setIsBankEditing(true);
                   }}
-                  readOnly={businessDetails.bankVerified}
-                  className={`bank-form-input ${businessDetails.bankVerified ? "locked-input" : ""}`}
+                  readOnly={businessDetails.bankVerified && businessDetails.status !== "Rejected"}
+                  className={`bank-form-input ${(businessDetails.bankVerified && businessDetails.status !== "Rejected") ? "locked-input" : ""}`}
                 />
               </div>
             </div>

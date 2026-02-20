@@ -116,6 +116,142 @@ async function registerRestaurantService(registrationData, files) {
   });
 }
 
+/**
+ * Adds a new menu item with its variants.
+ * @param {Object} itemData - Item details (restaurant_id, category_id, name, food_type, description, photo, variants).
+ */
+async function addMenuItemWithVariants(itemData) {
+  const {
+    restaurant_id,
+    category_id,
+    name,
+    food_type,
+    description,
+    photo,
+    variants,
+  } = itemData;
+
+  return await prisma.$transaction(async (tx) => {
+    // 1. Create the menu item
+    const item = await tx.restaurant_items.create({
+      data: {
+        restaurant_id,
+        category_id,
+        name,
+        food_type,
+        description,
+        photo,
+      },
+    });
+
+    // 2. Create variants
+    if (variants && variants.length > 0) {
+      const variantData = variants.map((v) => ({
+        item_id: item.id,
+        name: v.name,
+        price: parseFloat(v.price),
+      }));
+
+      await tx.restaurant_item_variants.createMany({
+        data: variantData,
+      });
+    }
+
+    // Return item with variants
+    return await tx.restaurant_items.findUnique({
+      where: { id: item.id },
+      include: {
+        restaurant_item_variants: true,
+      },
+    });
+  });
+}
+
+/**
+ * Lists all active item categories.
+ */
+async function listCategories() {
+  return await prisma.item_category_master.findMany({
+    where: { is_active: true },
+    orderBy: { name: "asc" },
+  });
+}
+
+/**
+ * Fetches all approved and active restaurants.
+ */
+async function getAllRestaurantsDiscovery() {
+  return await prisma.restaurants.findMany({
+    where: {
+      verification_status: "APPROVED",
+      is_active: true,
+    },
+    include: {
+      address: true,
+    },
+    orderBy: {
+      restaurant_name: "asc",
+    },
+  });
+}
+
+/**
+ * Fetches the menu for a specific restaurant, organized by categories.
+ * @param {string} restaurantId - The UUID of the restaurant.
+ */
+async function getRestaurantMenuDiscovery(restaurantId) {
+  // Fetch all items with their variants for this restaurant
+  const items = await prisma.restaurant_items.findMany({
+    where: {
+      restaurant_id: restaurantId,
+    },
+    include: {
+      category: true,
+      restaurant_item_variants: true,
+    },
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  // Group items by category
+  const categoriesMap = items.reduce((acc, item) => {
+    const categoryName = item.category.name;
+    if (!acc[categoryName]) {
+      acc[categoryName] = {
+        id: item.category.id,
+        name: categoryName,
+        items: [],
+      };
+    }
+    acc[categoryName].items.push(item);
+    return acc;
+  }, {});
+
+  return Object.values(categoriesMap);
+}
+
+/**
+ * Fetches a single menu item with its variants.
+ * @param {string} itemId - The UUID of the menu item.
+ */
+async function getMenuItemDiscovery(itemId) {
+  return await prisma.restaurant_items.findUnique({
+    where: {
+      id: itemId,
+    },
+    include: {
+      restaurant_item_variants: true,
+      category: true,
+    },
+  });
+}
+
 module.exports = {
   registerRestaurantService,
+  addMenuItemWithVariants,
+  listCategories,
+  getAllRestaurantsDiscovery,
+  getRestaurantMenuDiscovery,
+  getMenuItemDiscovery,
 };

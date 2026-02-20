@@ -29,6 +29,17 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (userData) {
+      const isOwner = userData.role?.name === "restaurant_owner";
+      const restaurant = userData.restaurants?.[0];
+
+      const getBusinessStatus = () => {
+        if (!isOwner) return null;
+        if (!restaurant) return "Registration Required";
+        if (restaurant.verification_status === "APPROVED") return "Verified";
+        if (restaurant.verification_status === "REJECTED") return "Rejected";
+        return "Pending Review";
+      };
+
       const formattedProfile = {
         firstName: userData.first_name || "",
         lastName: userData.last_name || "",
@@ -36,6 +47,8 @@ const ProfilePage = () => {
         email: userData.email || "",
         avatar: userData.avatar || "https://picsum.photos/seed/user123/200/200",
         status: userData.deleted_at ? "Inactive" : "Active",
+        businessStatus: getBusinessStatus(),
+        isOwner
       };
       setProfile(formattedProfile);
       setAddresses(userData.addresses || []);
@@ -110,6 +123,7 @@ const ProfilePage = () => {
         last_name: profile.lastName,
         phone_number: profile.phoneNumber,
         email: profile.email,
+        avatar: profile.avatar,
         addresses: addresses.map((addr) => ({
           ...(addr.id && addr.id.length === 36 ? { id: addr.id } : {}),
           address_type: addr.address_type,
@@ -208,6 +222,11 @@ const ProfilePage = () => {
                   <span className="account-status-badge">
                     {profile.status} Account
                   </span>
+                  {profile.isOwner && (
+                    <span className={`business-status-badge ${profile.businessStatus?.toLowerCase().replace(' ', '-')}`}>
+                      Business: {profile.businessStatus}
+                    </span>
+                  )}
                 </div>
                 <p className="profile-email">{profile.email}</p>
                 <input

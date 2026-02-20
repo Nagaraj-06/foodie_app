@@ -40,13 +40,21 @@ const MOCK_ADDRESSES = [
   },
 ];
 
-export const DeliveryAddress = ({ onProceedToPayment }) => {
+export const DeliveryAddress = ({ onProceedToPayment, externalAddresses = [], isPlacing = false }) => {
   const navigate = useNavigate();
-  const [selectedAddress, setSelectedAddress] = useState(MOCK_ADDRESSES[0]);
+  const [addresses, setAddresses] = useState(externalAddresses.length > 0 ? externalAddresses : MOCK_ADDRESSES);
+  const [selectedAddress, setSelectedAddress] = useState(addresses[0]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [addresses, setAddresses] = useState(MOCK_ADDRESSES);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
+
+  // Sync state if externalAddresses change
+  React.useEffect(() => {
+    if (externalAddresses.length > 0) {
+      setAddresses(externalAddresses);
+      setSelectedAddress(externalAddresses[0]);
+    }
+  }, [externalAddresses]);
 
   const handleSelectAddress = (address) => {
     setSelectedAddress(address);
@@ -199,10 +207,17 @@ export const DeliveryAddress = ({ onProceedToPayment }) => {
       <div className="delivery-address-footer">
         <button
           className="proceed-payment-button"
-          onClick={() => navigate("/payment")}
+          onClick={onProceedToPayment}
+          disabled={isPlacing}
         >
-          <span className="proceed-button-text">Place Order</span>
-          <span className="material-icons-outlined">arrow_forward</span>
+          {isPlacing ? (
+            <span className="proceed-button-text">Placing Order...</span>
+          ) : (
+            <>
+              <span className="proceed-button-text">Place Order</span>
+              <span className="material-icons-outlined">arrow_forward</span>
+            </>
+          )}
         </button>
       </div>
 

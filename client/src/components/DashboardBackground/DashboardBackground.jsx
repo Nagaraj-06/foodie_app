@@ -14,7 +14,10 @@ import {
 } from "recharts";
 import StatCard from "../StatCard/StatCard";
 
+import { useGetProfileQuery } from "../../store/api/authApi";
+
 const DashboardBackground = ({ onOpenOrder }) => {
+  const { data: userData, isLoading } = useGetProfileQuery();
   const [dateRange, setDateRange] = useState("This Month");
   const [isDateMenuOpen, setIsDateMenuOpen] = useState(false);
   const [showAllOrders, setShowAllOrders] = useState(false);
@@ -28,6 +31,37 @@ const DashboardBackground = ({ onOpenOrder }) => {
   const currentChartData = useMemo(() => {
     return RANGE_DATA[dateRange] || RANGE_DATA["This Month"];
   }, [dateRange]);
+
+  if (isLoading) return <div className="dashboard-container">Loading...</div>;
+
+  const restaurant = userData?.restaurants?.[0];
+  const isApproved = restaurant?.verification_status === "APPROVED";
+
+  if (!isApproved) {
+    return (
+      <div className="dashboard-container">
+        <div className="verification-pending-card">
+          <span className="material-symbols-outlined pending-icon">pending_actions</span>
+          <h2>Verification Pending</h2>
+          <p>Your business is currently being reviewed by our admin team. The order history dashboard will be available once your business is approved.</p>
+          <div className="status-steps">
+            <div className="step completed">
+              <span className="step-icon">check_circle</span>
+              <span>Registration Submitted</span>
+            </div>
+            <div className="step processing">
+              <span className="step-icon">sync</span>
+              <span>Admin Review in Progress</span>
+            </div>
+            <div className="step pending">
+              <span className="step-icon">radio_button_unchecked</span>
+              <span>Dashboard Access</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container">
@@ -51,9 +85,8 @@ const DashboardBackground = ({ onOpenOrder }) => {
                 {dateRange}
               </div>
               <span
-                className={`material-symbols-outlined dropdown-arrow ${
-                  isDateMenuOpen ? "open" : ""
-                }`}
+                className={`material-symbols-outlined dropdown-arrow ${isDateMenuOpen ? "open" : ""
+                  }`}
               >
                 expand_more
               </span>
@@ -68,9 +101,8 @@ const DashboardBackground = ({ onOpenOrder }) => {
                       setDateRange(range);
                       setIsDateMenuOpen(false);
                     }}
-                    className={`date-option ${
-                      dateRange === range ? "active" : ""
-                    }`}
+                    className={`date-option ${dateRange === range ? "active" : ""
+                      }`}
                   >
                     {range}
                   </button>
@@ -184,9 +216,8 @@ const DashboardBackground = ({ onOpenOrder }) => {
           >
             {showAllOrders ? "Show Less" : "View All Orders"}
             <span
-              className={`material-symbols-outlined ${
-                showAllOrders ? "rotated" : ""
-              }`}
+              className={`material-symbols-outlined ${showAllOrders ? "rotated" : ""
+                }`}
             >
               {showAllOrders ? "keyboard_arrow_up" : "arrow_forward"}
             </span>

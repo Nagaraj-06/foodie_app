@@ -12,70 +12,40 @@ import bombayTruffleImg from "../../assets/bombayTruffle.png";
 import grandHotelImg from "../../assets/grandHotel.png";
 import madrasSquareImg from "../../assets/madrasSquare.png";
 import SearchBar from "../../components/SearchBar/SearchBar";
+import { useGetRestaurantsQuery } from "../../store/api/restaurantApi";
+import { CircularProgress } from "@mui/material";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // From .env
 
 const Hotels = () => {
+  const { data: restaurantsData, isLoading } = useGetRestaurantsQuery();
   const [filterOn, setFilterOn] = useState(true);
   const [foodType, setFoodType] = useState("all");
   const [selectedLocation, setSelectedLocation] = useState("all");
   const [searchText, setSearchText] = useState("");
 
-  const hotels = [
-    {
-      id: 1,
-      name: "AsianKatha",
-      image: AsianKathaImg,
-      location: "Chennai",
-      isPureVeg: true,
-      rating: 4,
-    },
-    {
-      id: 2,
-      name: "Bombay Truffle",
-      image: bombayTruffleImg,
-      location: "Bangalore",
-      isPureVeg: true,
-      rating: 5,
-    },
-    {
-      id: 3,
-      name: "Grand Hotel",
-      image: grandHotelImg,
-      location: "Bangalore",
-      isPureVeg: false,
-      rating: 3,
-    },
-    {
-      id: 4,
-      name: "Madras Square",
-      image: madrasSquareImg,
-      location: "Bangalore",
-      isPureVeg: false,
-      rating: 4,
-    },
-    {
-      id: 5,
-      name: "Madras Square",
-      image: madrasSquareImg,
-      location: "Bangalore",
-      isPureVeg: false,
-      rating: 4,
-    },
-  ];
+  if (isLoading) {
+    return (
+      <div className="Section" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+        <CircularProgress />
+      </div>
+    );
+  }
 
-  const locations = [...new Set(hotels.map((h) => h.location))];
+  const hotels = restaurantsData?.data || [];
+  const locations = [...new Set(hotels.map((h) => h.address?.city).filter(Boolean))];
 
   const filteredHotels = filterOn
     ? hotels.filter((h) => {
-        const locationMatch =
-          selectedLocation === "all" || h.location === selectedLocation;
+      const locationMatch =
+        selectedLocation === "all" || h.address?.city === selectedLocation;
 
-        const foodMatch =
-          foodType === "all" ||
-          (foodType === "veg" && h.isPureVeg) ||
-          (foodType === "nonveg" && !h.isPureVeg);
+      // Current schema doesn't have isPureVeg on restaurant directly, 
+      // it's defined at item level. For now, we'll show all or use a placeholder.
+      const foodMatch = true;
 
-        return locationMatch && foodMatch;
-      })
+      return locationMatch && foodMatch;
+    })
     : hotels;
 
   return (
@@ -147,7 +117,14 @@ const Hotels = () => {
                   : h?.name?.toLowerCase().includes(searchText.toLowerCase());
               })
               .map((h) => (
-                <HotelCard key={h.id} {...h} />
+                <HotelCard
+                  key={h.id}
+                  id={h.id}
+                  name={h.restaurant_name}
+                  image={h.photo ? `${API_BASE_URL}/auth/${h.photo}` : grandHotelImg}
+                  location={h.address?.city || "Unknown"}
+                  rating={4} // Placeholder rating
+                />
               ))}
           </div>
         </div>

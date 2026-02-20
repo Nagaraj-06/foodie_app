@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth.middleware");
-const { addToCart, removeFromCart, placeOrder, getMyOrders, getRestaurantOrderHistory } = require("../controller/orders");
+const { addToCart, removeFromCart, placeOrder, getMyOrders, getRestaurantOrderHistory, getCart } = require("../controller/orders");
 
 // Health check
 router.get("/health", (req, res) => {
@@ -31,6 +31,20 @@ router.use(authMiddleware());
  *         description: Bad request
  */
 router.post("/private/api/order/cart/add", addToCart);
+
+/**
+ * @swagger
+ * /private/api/order/cart:
+ *   get:
+ *     summary: Fetch current user's cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Cart fetched
+ */
+router.get("/private/api/order/cart", getCart);
 
 /**
  * @swagger

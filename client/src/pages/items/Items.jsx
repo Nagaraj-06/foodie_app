@@ -5,69 +5,31 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import FilterIcon from "@mui/icons-material/List";
 import ItemCard from "../../components/ItemCard/ItemCard";
+import { useGetRestaurantMenuQuery } from "../../store/api/restaurantApi";
+import { CircularProgress } from "@mui/material";
 import vegBiriyaniImg from "../../assets/food-items/vegBiriyani.png";
 import vegRollImg from "../../assets/food-items/vegRoll.png";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // From .env
+
 const Items = () => {
-  const { restaurantName } = useParams();
+  const { restaurantId } = useParams();
+  const { data: menuData, isLoading } = useGetRestaurantMenuQuery(restaurantId);
   const navigate = useNavigate();
-  const decodedName = decodeURIComponent(restaurantName);
   const [searchText, setSearchText] = useState("");
-  const [filterOn, setFilterOn] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  const Items = [
-    {
-      id: 1,
-      name: "Biriyani",
-      items: [
-        { name: "Veg Biriyani", image: vegBiriyaniImg, price: 120.0 },
-        { name: "Chicken Biriyani", image: vegBiriyaniImg, price: 160.0 },
-        { name: "Mutton Biriyani", image: vegBiriyaniImg, price: 200.0 },
-        { name: "Egg Biriyani", image: vegBiriyaniImg, price: 130.0 },
-        { name: "Egg Biriyani", image: vegBiriyaniImg, price: 130.0 },
-        { name: "Egg Biriyani", image: vegBiriyaniImg, price: 130.0 },
-        { name: "Egg Biriyani", image: vegBiriyaniImg, price: 130.0 },
-        { name: "Egg Biriyani", image: vegBiriyaniImg, price: 130.0 },
-      ],
-    },
-    {
-      id: 2,
-      name: "Dosa",
-      items: [
-        { name: "Veg Roll", image: vegRollImg, price: 60 },
-        { name: "Chicken Roll", image: vegRollImg, price: 80 },
-        { name: "Paneer Roll", image: vegRollImg, price: 70 },
-      ],
-    },
-    // {
-    //   id: 3,
-    //   name: "Starters",
-    //   items: [
-    //     { item: "Veg Starter", price: 90 },
-    //     { item: "Chicken Starter", price: 140 },
-    //     { item: "Fish Starter", price: 150 },
-    //   ],
-    // },
-    // {
-    //   id: 4,
-    //   name: "Desserts",
-    //   items: [
-    //     // { item: "Gulab Jamun", price: 50 },
-    //     // { item: "Ice Cream", price: 40 },
-    //     // { item: "Rasmalai", price: 60 },
-    //   ],
-    // },
-    // {
-    //   id: 5,
-    //   name: "Beverages",
-    //   items: [
-    //     { item: "Soft Drinks", price: 30 },
-    //     { item: "Lassi", price: 40 },
-    //     { item: "Coffee / Tea", price: 20 },
-    //   ],
-    // },
-  ];
+  if (isLoading) {
+    return (
+      <div className="main" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  const categories = menuData?.data || [];
+  // Get first item to find restaurant name if needed, or we might need another API for restaurant details
+  const restaurantName = "Menu"; // We could fetch this if needed, for now placeholder
 
   return (
     <>
@@ -81,7 +43,7 @@ const Items = () => {
               />
               <div id="hotel-name">
                 <span>
-                  <h2>{decodedName}</h2>
+                  <h2>{restaurantName}</h2>
                 </span>
                 <span>
                   <p>Select items to add to the cart</p>
@@ -109,7 +71,7 @@ const Items = () => {
               All Items
             </button>
 
-            {Items.map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat.id}
                 className={`item-filter-option ${selectedCategory === cat.name ? "active-filter" : ""
@@ -123,7 +85,7 @@ const Items = () => {
 
 
           <div className="item-grid">
-            {Items.filter((cat) => {
+            {categories.filter((cat) => {
               // filter categories
               if (selectedCategory !== "All" && cat.name !== selectedCategory) {
                 return false;
@@ -138,11 +100,14 @@ const Items = () => {
                     : food.name.toLowerCase().includes(searchText.toLowerCase())
                 )
               )
-              .map((food, index) => (
+              .map((food) => (
                 <ItemCard
-                  key={index}
-                  {...food}
-                  restaurantName={restaurantName}
+                  key={food.id}
+                  id={food.id}
+                  name={food.name}
+                  price={food.restaurant_item_variants?.[0]?.price || 0}
+                  image={food.photo ? `${API_BASE_URL}/auth/${food.photo}` : vegBiriyaniImg}
+                  restaurantId={restaurantId}
                 />
               ))}
           </div>

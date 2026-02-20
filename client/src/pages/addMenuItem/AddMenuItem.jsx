@@ -1,15 +1,18 @@
 import React, { useRef, useState } from "react";
 import "./AddMenuItem.css";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import Icon from "@mui/material/Icon";
+import { useGetProfileQuery } from "../../store/api/authApi";
+import { useGetCategoriesQuery, useAddMenuItemMutation } from "../../store/api/restaurantApi";
 
 const AddMenuItem = () => {
+  const { data: userData, isLoading: isProfileLoading } = useGetProfileQuery();
+  const { data: categoriesData, isLoading: isCategoriesLoading } = useGetCategoriesQuery();
+  const [addMenuItem, { isLoading: isSubmitting }] = useAddMenuItemMutation();
+
   const itemRef = useRef();
   const [itemFile, setItemFile] = useState(null);
-  const [selectedVariants, setSelectedVariants] = useState([]);
-
+  const [selectedVariants, setSelectedVariants] = useState([1]); // Default select first variant
   const [form, setForm] = useState({
-    // Item Info
     itemName: "",
     description: "",
     photo: "",
@@ -18,27 +21,32 @@ const AddMenuItem = () => {
   });
 
   const [variants, setVariants] = useState([
-    { id: 1, name: "Large", price: "800.00", isDefault: true },
-    { id: 2, name: "Medium", price: "500.00", isDefault: false },
-    { id: 3, name: "Small", price: "300.00", isDefault: false },
+    { id: 1, name: "Regular", price: "", isDefault: true },
   ]);
 
-  const [foodTypes, setFoodTypes] = useState([
-    { id: 1, name: "Veg" },
-    { id: 2, name: "Non Veg" },
-  ]);
+  if (isProfileLoading || isCategoriesLoading) return <div className="main">Loading...</div>;
 
-  const food_types = ["Veg", "NonVeg"];
+  const restaurant = userData?.restaurants?.[0];
+  const isApproved = restaurant?.verification_status === "APPROVED";
 
-  const categories = [
-    "Starters",
-    "Main Course",
-    "Desserts",
-    "Beverages",
-    "Salads",
-    "Soups",
-    "Pizza",
-    "Pasta",
+  if (!isApproved) {
+    return (
+      <div className="main">
+        <div className="verification-notice">
+          <span className="material-symbols-outlined notice-icon">lock_person</span>
+          <h2>Access Restricted</h2>
+          <p>You need to be an <strong>approved business owner</strong> to add menu items. Please ensure your business registration is complete and approved by the admin.</p>
+          <button className="goto-profile-btn" onClick={() => window.location.href = '/business_profile'}>
+            Check Registration Status
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const food_types = [
+    { label: "Veg", value: "VEG" },
+    { label: "Non Veg", value: "NON_VEG" }
   ];
 
   const addVariant = () => {
@@ -52,17 +60,64 @@ const AddMenuItem = () => {
   const removeVariant = (id) => {
     if (variants.length > 1) {
       setVariants(variants.filter((v) => v.id !== id));
+      setSelectedVariants(prev => prev.filter(vId => vId !== id));
     }
+  };
+
+  const handleVariantChange = (id, field, value) => {
+    setVariants(prev => prev.map(v => v.id === id ? { ...v, [field]: value } : v));
   };
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
-  function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
-  }
+    try {
+      if (!selectedVariants.length) {
+        alert("Please select at least one variant");
+        return;
+      }
+
+      const activeVariants = variants
+        .filter(v => selectedVariants.includes(v.id))
+        .map(v => ({
+          name: v.name,
+          price: parseFloat(v.price)
+        }));
+
+      if (activeVariants.some(v => !v.name || isNaN(v.price))) {
+        alert("Please fill in all selected variant details with valid prices");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("restaurant_id", restaurant.id);
+      formData.append("category_id", form.category);
+      formData.append("name", form.itemName);
+      formData.append("food_type", form.food_type);
+      formData.append("description", form.description);
+      formData.append("variants", JSON.stringify(activeVariants));
+
+      if (itemFile) {
+        formData.append("photo", itemFile);
+      }
+
+      await addMenuItem(formData).unwrap();
+
+      alert("Menu item added successfully!");
+      // Reset form
+      setForm({ itemName: "", description: "", photo: "", category: "", food_type: "" });
+      setVariants([{ id: 1, name: "Regular", price: "", isDefault: true }]);
+      setSelectedVariants([1]);
+      setItemFile(null);
+
+    } catch (err) {
+      console.error(err);
+      alert(err.data?.message || "Failed to add menu item");
+    }
+  };
 
   const handleVariantToggle = (id) => {
     setSelectedVariants((prev) =>
@@ -129,9 +184,9 @@ const AddMenuItem = () => {
                   className="add-menu-select"
                 >
                   <option value="">Select Food Type</option>
-                  {food_types.map((food_type) => (
-                    <option key={food_type} value={food_type}>
-                      {food_type}
+                  {food_types.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
                     </option>
                   ))}
                 </select>
@@ -145,9 +200,9 @@ const AddMenuItem = () => {
                   className="add-menu-select"
                 >
                   <option value="">Select Category</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
+                  {categoriesData?.data?.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
                     </option>
                   ))}
                 </select>
@@ -272,7 +327,9 @@ const AddMenuItem = () => {
           </div>
           <div className="bottom-buttons">
             <button className="cancel-btn">Cancel</button>
-            <button className="submit-btn">Add Item </button>
+            <button className="submit-btn" disabled={isSubmitting}>
+              {isSubmitting ? "Adding..." : "Add Item"}
+            </button>
           </div>
         </form>
       </div>

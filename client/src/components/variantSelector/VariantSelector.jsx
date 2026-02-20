@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from "react";
 import "./VariantSelector.css";
 import { useNavigate } from "react-router-dom";
+import { useAddToCartMutation } from "../../store/api/cartApi";
+import { CircularProgress } from "@mui/material";
 
 export const VariantSelector = ({ product }) => {
   const navigate = useNavigate();
+  const [addToCart, { isLoading: isAdding }] = useAddToCartMutation();
 
   const [selectedVariantId, setSelectedVariantId] = useState(
     product.variants[0].id
@@ -22,6 +25,21 @@ export const VariantSelector = ({ product }) => {
 
   const handleQuantityChange = (delta) => {
     setQuantity((prev) => Math.max(1, prev + delta));
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      await addToCart({
+        variant_id: selectedVariantId,
+        quantity: quantity
+      }).unwrap();
+
+      alert("Item added to cart!");
+      navigate("/carts");
+    } catch (err) {
+      console.error(err);
+      alert(err.data?.message || "Failed to add to cart");
+    }
   };
 
   return (
@@ -98,7 +116,7 @@ export const VariantSelector = ({ product }) => {
                       </span>
                     </div>
                     <span className="variant-option-price">
-                      SAR {variant.price.toFixed(2)}
+                      ₹{variant.price.toFixed(2)}
                     </span>
                   </label>
                 );
@@ -117,7 +135,7 @@ export const VariantSelector = ({ product }) => {
         <div className="variant-total-section">
           <span className="variant-total-label">Item total</span>
           <span className="variant-total-price">
-            SAR {total.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            ₹{total.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
           </span>
         </div>
         <div className="variant-actions">
@@ -139,9 +157,10 @@ export const VariantSelector = ({ product }) => {
           </div>
           <button
             className="variant-add-button"
-            onClick={() => navigate("/carts")}
+            onClick={handleAddToCart}
+            disabled={isAdding}
           >
-            Add to cart
+            {isAdding ? <CircularProgress size={24} color="inherit" /> : "Add to cart"}
           </button>
         </div>
       </div>

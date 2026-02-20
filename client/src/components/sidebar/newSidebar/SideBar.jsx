@@ -12,16 +12,35 @@ const Sidebar = () => {
     <aside className="sidebar">
       <div className="sidebar-top">
         <nav className="sidebar-nav">
-          <NavItem icon="dashboard" label="Dashboard" path="/dashboard" />
-
           {userRole === "restaurant_owner" && (
             <>
-              <NavItem
-                icon="add_business"
-                label="RegisterBusiness"
-                path="/business_register"
-              />
-              <NavItem icon="post_add" label="AddMenuItem" path="/add_menu_item" />
+              <NavItem icon="dashboard" label="Dashboard" path="/dashboard" />
+              {userData.restaurants?.length > 0 ? (
+                <NavItem
+                  icon={
+                    userData.restaurants[0].verification_status === "APPROVED"
+                      ? "storefront"
+                      : userData.restaurants[0].verification_status === "REJECTED"
+                        ? "error"
+                        : "pending"
+                  }
+                  label={
+                    userData.restaurants[0].verification_status === "APPROVED"
+                      ? "Business Details"
+                      : userData.restaurants[0].verification_status === "REJECTED"
+                        ? "Registration Rejected"
+                        : "Verification Pending"
+                  }
+                  path="/business_profile"
+                />
+              ) : (
+                <NavItem
+                  icon="add_business"
+                  label="Register Business"
+                  path="/business_register"
+                />
+              )}
+              <NavItem icon="post_add" label="Add Menu Item" path="/add_menu_item" />
             </>
           )}
 

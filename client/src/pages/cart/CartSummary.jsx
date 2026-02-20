@@ -62,7 +62,7 @@ const CartSummary = ({ items, onUpdateQuantity, onRemoveItem, onToggleSelection,
           <div className="total-row">
             <span>Grand Total</span>
             <span className="total-amount">
-              SAR {totals.grandTotal.toFixed(2)}
+              ₹{totals.grandTotal.toFixed(2)}
             </span>
           </div>
         </div>
