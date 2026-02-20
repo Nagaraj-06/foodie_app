@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import "./CartMain.css";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import CartSummary from "./CartSummary";
@@ -12,6 +13,7 @@ import { CircularProgress } from "@mui/material";
 import vegBiriyaniImg from "../../assets/food-items/vegBiriyani.png";
 
 const CartMain = () => {
+  const navigate = useNavigate();
   const { data: cartData, isLoading: isCartLoading } = useGetCartQuery();
   const { data: profileData, isLoading: isProfileLoading } = useGetProfileQuery();
   const [removeFromCart] = useRemoveFromCartMutation();
@@ -84,17 +86,19 @@ const CartMain = () => {
 
     try {
       const orderPayload = {
-        payment_method: "ONLINE", // Default for now
+        payment_method: "ONLINE",
         items: selectedCartItems.map(item => ({
           variant_id: item.id,
           quantity: item.quantity
         }))
       };
 
-      await placeOrder(orderPayload).unwrap();
-      alert("Order placed successfully!");
-      // Optionally navigate to orders page
-      // navigate("/orders");
+      const result = await placeOrder(orderPayload).unwrap();
+      // data is an array of orders (one per restaurant group)
+      const orders = result?.data;
+      const orderId = Array.isArray(orders) ? orders[0]?.id : orders?.id;
+      navigate(`/payment?order_id=${orderId}`);
+
     } catch (err) {
       console.error(err);
       alert(err.data?.message || "Failed to place order");

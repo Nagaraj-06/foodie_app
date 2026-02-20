@@ -5,7 +5,8 @@ import Items from "../pages/items/Items";
 import { LoginScreen } from "../pages/login/LoginPage";
 import AuthSuccess from "../pages/login/AuthSuccess";
 import MyOrders from "../pages/myOrders/MyOrders";
-import { PaymentPage } from "../pages/payment/paymentPage";
+import { PaymentPage } from "../pages/payment/PaymentPage";
+import { PaymentSuccess } from "../pages/payment/PaymentSuccess";
 import { VariantPage } from "../pages/variantsAdd/VariantPage";
 
 const publicRoutes = [
@@ -32,6 +33,10 @@ const publicRoutes = [
   {
     path: "payment",
     element: <PaymentPage />,
+  },
+  {
+    path: "payment/success",
+    element: <PaymentSuccess />,
   },
   {
     path: "login",

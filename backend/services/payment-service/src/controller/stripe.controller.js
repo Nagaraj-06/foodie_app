@@ -3,9 +3,74 @@ const {
     createStripePaymentIntentService,
     retrieveStripePaymentIntentService,
     confirmStripePaymentIntentService,
+    createStripeCheckoutSessionService,
 } = require("../services/stripe.service");
 const { sendPaymentSuccessEvent } = require("../producers/payment.producer");
 
+/**
+ * Returns the Stripe Checkout URL previously created by the Kafka consumer
+ * for a given order_id. Falls back to creating a new session if not found.
+ */
+async function getCheckoutSession(req, res) {
+    try {
+        const { order_id } = req.params;
+
+        // Look up existing payment record (created by Kafka consumer)
+        const payment = await prisma.payments.findFirst({
+            where: { order_id },
+            orderBy: { created_at: "desc" },
+        });
+
+        if (payment && payment.transaction_id && payment.transaction_id.startsWith("https://")) {
+            return res.json({
+                success: true,
+                data: {
+                    checkout_url: payment.transaction_id,
+                    source: "kafka_prefetched",
+                },
+            });
+        }
+
+        // Fallback: create a new session on-demand
+        const order = await prisma.orders.findUnique({ where: { id: order_id } });
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found" });
+        }
+
+        const baseUrl = process.env.FRONTEND_BASE_URL || "http://localhost:5173";
+        const session = await createStripeCheckoutSessionService(
+            order.total_amount,
+            order.id,
+            `${baseUrl}/payment/success?order_id=${order.id}`,
+            `${baseUrl}/carts`
+        );
+
+        if (!payment) {
+            await prisma.payments.create({
+                data: {
+                    order_id: order.id,
+                    gateway: "STRIPE",
+                    stripe_payment_intent_id: session.payment_intent || session.id,
+                    amount: order.total_amount,
+                    currency: "INR",
+                    status: "CREATED",
+                    transaction_id: session.url,
+                },
+            });
+        }
+
+        return res.status(201).json({
+            success: true,
+            data: {
+                checkout_url: session.url,
+                source: "on_demand",
+            },
+        });
+    } catch (error) {
+        console.error("Get Checkout Session Error:", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
 /**
  * Creates a Payment Intent for an order.
  */
@@ -103,7 +168,56 @@ async function confirmPayment(req, res) {
     }
 }
 
+/**
+ * Creates a Stripe Checkout Session (Hosted UI).
+ */
+async function createCheckoutSession(req, res) {
+    try {
+        const { order_id, success_url, cancel_url } = req.body;
+
+        const order = await prisma.orders.findUnique({
+            where: { id: order_id },
+        });
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found" });
+        }
+
+        const session = await createStripeCheckoutSessionService(
+            order.total_amount,
+            order.id,
+            success_url,
+            cancel_url
+        );
+
+        // Save initial payment record
+        await prisma.payments.create({
+            data: {
+                order_id: order.id,
+                gateway: "STRIPE",
+                stripe_payment_intent_id: session.payment_intent,
+                amount: order.total_amount,
+                currency: "INR",
+                status: "CREATED",
+            },
+        });
+
+        res.status(201).json({
+            success: true,
+            data: {
+                session_id: session.id,
+                checkout_url: session.url,
+            },
+        });
+    } catch (error) {
+        console.error("Create Checkout Session Error:", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 module.exports = {
     createPaymentIntent,
     confirmPayment,
+    createCheckoutSession,
+    getCheckoutSession,
 };
