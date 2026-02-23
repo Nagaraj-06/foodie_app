@@ -7,12 +7,14 @@ const {
     addToCartSchema,
     placeOrderSchema,
     removeFromCartSchema,
+    updateCartSchema,
 } = require("../routes/schema");
 
 // Convert schemas
 const addToCartSwagger = convertJoiToSwagger(addToCartSchema);
 const placeOrderSwagger = convertJoiToSwagger(placeOrderSchema);
 const removeFromCartSwagger = convertJoiToSwagger(removeFromCartSchema);
+const updateCartSwagger = convertJoiToSwagger(updateCartSchema);
 
 const options = {
     definition: {
@@ -27,6 +29,7 @@ const options = {
                 AddToCart: addToCartSwagger,
                 PlaceOrder: placeOrderSwagger,
                 RemoveFromCart: removeFromCartSwagger,
+                UpdateCart: updateCartSwagger,
             },
             securitySchemes: {
                 bearerAuth: {

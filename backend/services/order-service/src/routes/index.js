@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth.middleware");
-const { addToCart, removeFromCart, placeOrder, getMyOrders, getRestaurantOrderHistory, getCart } = require("../controller/orders");
+const { addToCart, removeFromCart, placeOrder, getMyOrders, getRestaurantOrderHistory, getCart, updateCartItem } = require("../controller/orders");
 
 // Health check
 router.get("/health", (req, res) => {
@@ -31,6 +31,28 @@ router.use(authMiddleware());
  *         description: Bad request
  */
 router.post("/private/api/order/cart/add", addToCart);
+
+/**
+ * @swagger
+ * /private/api/order/cart:
+ *   put:
+ *     summary: Update cart item quantity
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateCart'
+ *     responses:
+ *       200:
+ *         description: Cart updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.put("/private/api/order/cart", updateCartItem);
 
 /**
  * @swagger

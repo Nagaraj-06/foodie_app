@@ -1,4 +1,4 @@
-const { addToCartSchema, placeOrderSchema } = require("../../routes/schema");
+const { addToCartSchema, placeOrderSchema, updateCartSchema } = require("../../routes/schema");
 const orderService = require("../../services/order.service");
 
 exports.addToCart = async (req, res) => {
@@ -8,6 +8,18 @@ exports.addToCart = async (req, res) => {
 
     const result = await orderService.addToCart(req.user.user_id, value);
     res.status(200).json({ message: "Added to cart", data: result });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+exports.updateCartItem = async (req, res) => {
+  try {
+    const { error, value } = updateCartSchema.validate(req.body);
+    if (error) return res.status(400).json({ message: error.message });
+
+    const result = await orderService.updateCartItemQuantity(req.user.user_id, value);
+    res.status(200).json({ message: "Cart updated", data: result });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

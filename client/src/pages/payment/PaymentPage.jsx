@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useCreateCheckoutSessionMutation } from "../../store/api/paymentApi";
+import { useLazyGetCheckoutSessionQuery } from "../../store/api/paymentApi";
 import "./PaymentPage.css";
 
 // ---- Payment Page ----
@@ -8,7 +8,7 @@ export const PaymentPage = () => {
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("order_id");
 
-  const [createCheckoutSession, { isLoading }] = useCreateCheckoutSessionMutation();
+  const [getCheckoutSession, { isLoading }] = useLazyGetCheckoutSessionQuery();
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -16,12 +16,7 @@ export const PaymentPage = () => {
 
     const launchCheckout = async () => {
       try {
-        const baseUrl = window.location.origin;
-        const res = await createCheckoutSession({
-          order_id: orderId,
-          success_url: `${baseUrl}/payment/success?order_id=${orderId}`,
-          cancel_url: `${baseUrl}/carts`,
-        }).unwrap();
+        const res = await getCheckoutSession(orderId).unwrap();
 
         // Redirect to Stripe Hosted Checkout
         window.location.href = res.data.checkout_url;
@@ -32,7 +27,7 @@ export const PaymentPage = () => {
     };
 
     launchCheckout();
-  }, [orderId, createCheckoutSession]);
+  }, [orderId, getCheckoutSession]);
 
   return (
     <div className="payment-page-wrapper">

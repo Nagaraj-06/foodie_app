@@ -163,6 +163,12 @@
   border: 1px solid #fecaca;
 }
 
+.status-refunded {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
 .status-default {
   background-color: #f8fafc;
   color: #475569;

@@ -15,6 +15,11 @@ exports.placeOrderSchema = Joi.object({
   ).min(1).required(),
 });
 
+exports.updateCartSchema = Joi.object({
+  variant_id: Joi.string().uuid().required(),
+  quantity: Joi.number().integer().min(0).required(),
+});
+
 exports.removeFromCartSchema = Joi.object({
   variant_id: Joi.string().uuid().required(),
 });

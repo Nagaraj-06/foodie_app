@@ -15,6 +15,19 @@ export const cartApi = baseApi.injectEndpoints({
                 url: `/order/private/api/order/cart/${variantId}`,
                 method: 'DELETE',
             }),
+            async onQueryStarted(variantId, { dispatch, queryFulfilled }) {
+                const patchResult = dispatch(
+                    cartApi.util.updateQueryData('getCart', undefined, (draft) => {
+                        const index = draft.data.findIndex((item) => item.variant_id === variantId);
+                        if (index !== -1) draft.data.splice(index, 1);
+                    })
+                );
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResult.undo();
+                }
+            },
             invalidatesTags: ['Cart'],
         }),
         getCart: builder.query({
@@ -29,6 +42,29 @@ export const cartApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ['Cart', 'Orders'],
         }),
+        updateCartQuantity: builder.mutation({
+            query: (updateData) => ({
+                url: '/order/private/api/order/cart',
+                method: 'PUT',
+                body: updateData,
+            }),
+            async onQueryStarted({ variant_id, quantity }, { dispatch, queryFulfilled }) {
+                const patchResult = dispatch(
+                    cartApi.util.updateQueryData('getCart', undefined, (draft) => {
+                        const cartItem = draft.data.find((item) => item.variant_id === variant_id);
+                        if (cartItem) {
+                            cartItem.quantity = quantity;
+                        }
+                    })
+                );
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResult.undo();
+                }
+            },
+            invalidatesTags: ['Cart'],
+        }),
     }),
 });
 
@@ -37,4 +73,5 @@ export const {
     useRemoveFromCartMutation,
     useGetCartQuery,
     usePlaceOrderMutation,
+    useUpdateCartQuantityMutation,
 } = cartApi;

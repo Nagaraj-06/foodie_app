@@ -52,6 +52,31 @@ exports.addToCart = async (userId, data) => {
   return cartItem;
 };
 
+exports.updateCartItemQuantity = async (userId, data) => {
+  const { variant_id, quantity } = data;
+
+  if (quantity <= 0) {
+    return await prisma.cart.delete({
+      where: {
+        user_id_variant_id: {
+          user_id: userId,
+          variant_id: variant_id,
+        },
+      },
+    });
+  }
+
+  return await prisma.cart.update({
+    where: {
+      user_id_variant_id: {
+        user_id: userId,
+        variant_id: variant_id,
+      },
+    },
+    data: { quantity },
+  });
+};
+
 exports.placeOrder = async (userId, data) => {
   return prisma.$transaction(async (tx) => {
     const { payment_method, items } = data;
@@ -176,25 +201,28 @@ exports.getUserOrders = async (userId) => {
 };
 
 exports.getRestaurantOrderHistory = async (ownerId, period = "month") => {
-  // 0. Find restaurant associated with owner
-  const restaurant = await prisma.restaurants.findFirst({
-    where: { owner_user_id: ownerId }
+  // 0. Find all restaurants associated with owner to handle potential ID mismatches or multiple branches
+  const userRestaurants = await prisma.restaurants.findMany({
+    where: { owner_user_id: ownerId },
+    select: { id: true, restaurant_name: true }
   });
 
-  if (!restaurant) {
+  if (userRestaurants.length === 0) {
     throw new Error("Restaurant not found for this owner");
   }
 
-  const restaurantId = restaurant.id;
+  const restaurantIds = userRestaurants.map(r => r.id);
   const now = new Date();
-  const startOfCurrent = new Date(now.getFullYear(), now.getMonth(), 1);
-  const startOfLast = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
-  // 1. Fetch orders for analytics
+  // Use UTC dates to avoid timezone discrepancies with DB storage
+  const startOfCurrentUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  const startOfLastUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1));
+
+  // 1. Fetch orders for analytics across all owned restaurants
   const orders = await prisma.orders.findMany({
     where: {
-      restaurant_id: restaurantId,
-      created_at: { gte: startOfLast }
+      restaurant_id: { in: restaurantIds },
+      created_at: { gte: startOfLastUTC }
     },
     include: {
       order_items: true,
@@ -202,9 +230,9 @@ exports.getRestaurantOrderHistory = async (ownerId, period = "month") => {
     },
     orderBy: { created_at: "desc" }
   });
-  console.log(orders);
-  const currentOrders = orders.filter(o => o.created_at >= startOfCurrent);
-  const lastOrders = orders.filter(o => o.created_at < startOfCurrent);
+
+  const currentOrders = orders.filter(o => new Date(o.created_at) >= startOfCurrentUTC);
+  const lastOrders = orders.filter(o => new Date(o.created_at) < startOfCurrentUTC);
 
   // 2. Calculate Stats
   const calculateStats = (orderList) => {
@@ -217,7 +245,6 @@ exports.getRestaurantOrderHistory = async (ownerId, period = "month") => {
   const currentStats = calculateStats(currentOrders);
   const lastStats = calculateStats(lastOrders);
 
-  // 3. Calculate Comparisons
   const calcDiff = (curr, prev) => prev > 0 ? ((curr - prev) / prev) * 100 : 0;
 
   return {
@@ -245,6 +272,7 @@ exports.getRestaurantOrderHistory = async (ownerId, period = "month") => {
     }))
   };
 };
+
 exports.getUserCart = async (userId) => {
   return await prisma.cart.findMany({
     where: { user_id: userId },
@@ -269,4 +297,5 @@ module.exports = {
   getUserOrders: exports.getUserOrders,
   getRestaurantOrderHistory: exports.getRestaurantOrderHistory,
   getUserCart: exports.getUserCart,
+  updateCartItemQuantity: exports.updateCartItemQuantity,
 };

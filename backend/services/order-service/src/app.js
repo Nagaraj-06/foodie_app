@@ -8,6 +8,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Request Logger
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`, req.body);
+    next();
+});
+
 // Swagger
 swaggerDocs(app);
 

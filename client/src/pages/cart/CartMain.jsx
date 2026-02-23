@@ -7,7 +7,7 @@ import { PaymentSummary } from "./PaymentSummary";
 import { Constants } from "./constants";
 import { DeliveryAddress } from "../../components/DeliveryAddress/DeliveryAddress";
 import AddressModal from "../../components/AddressModal/AddressModal";
-import { useGetCartQuery, useRemoveFromCartMutation, usePlaceOrderMutation } from "../../store/api/cartApi";
+import { useGetCartQuery, useRemoveFromCartMutation, usePlaceOrderMutation, useUpdateCartQuantityMutation } from "../../store/api/cartApi";
 import { useGetProfileQuery } from "../../store/api/authApi";
 import { CircularProgress } from "@mui/material";
 import vegBiriyaniImg from "../../assets/food-items/vegBiriyani.png";
@@ -18,6 +18,7 @@ const CartMain = () => {
   const { data: profileData, isLoading: isProfileLoading } = useGetProfileQuery();
   const [removeFromCart] = useRemoveFromCartMutation();
   const [placeOrder, { isLoading: isPlacing }] = usePlaceOrderMutation();
+  const [updateCartQuantity] = useUpdateCartQuantityMutation();
 
   const [selectedItems, setSelectedItems] = useState([]);
 
@@ -49,9 +50,22 @@ const CartMain = () => {
     }
   };
 
-  const updateQuantity = (id, delta) => {
-    // We could implement an updateQuantity API, but for now we'll just handle it or use addToCart with delta
-    alert("Quantity update not fully implemented yet");
+  const updateQuantity = async (id, delta) => {
+    const item = cartItems.find(i => i.id === id);
+    if (!item) return;
+
+    const newQuantity = item.quantity + delta;
+
+    try {
+      if (newQuantity <= 0) {
+        await removeItem(id);
+      } else {
+        await updateCartQuantity({ variant_id: id, quantity: newQuantity }).unwrap();
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update quantity");
+    }
   };
 
   const removeItem = async (id) => {

@@ -1,13 +1,11 @@
 import React, { useState, useMemo } from "react";
 import "./DashboardBackground.css";
-import { ALL_ORDERS, RANGE_DATA } from "../../pages/dashBoard/constants";
+import { RANGE_DATA } from "../../pages/dashBoard/constants";
 import {
   ResponsiveContainer,
   BarChart,
   CartesianGrid,
   Bar,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
@@ -15,26 +13,32 @@ import {
 import StatCard from "../StatCard/StatCard";
 
 import { useGetProfileQuery } from "../../store/api/authApi";
+import { useGetRestaurantOrderHistoryQuery } from "../../store/api/orderApi";
 
 const DashboardBackground = ({ onOpenOrder }) => {
-  const { data: userData, isLoading } = useGetProfileQuery();
+  const { data: userData, isLoading: isUserLoading } = useGetProfileQuery();
   const [dateRange, setDateRange] = useState("This Month");
   const [isDateMenuOpen, setIsDateMenuOpen] = useState(false);
   const [showAllOrders, setShowAllOrders] = useState(false);
 
+  const { data: historyData, isLoading: isHistoryLoading } = useGetRestaurantOrderHistoryQuery(dateRange);
+
   const ranges = ["Today", "This Week", "This Month", "This Year"];
 
+  const orders = useMemo(() => historyData?.recent_orders || [], [historyData]);
+  const summary = useMemo(() => historyData?.summary || {}, [historyData]);
+
   const displayedOrders = useMemo(() => {
-    return showAllOrders ? ALL_ORDERS : ALL_ORDERS.slice(0, 4);
-  }, [showAllOrders]);
+    return showAllOrders ? orders : orders.slice(0, 4);
+  }, [showAllOrders, orders]);
 
   const currentChartData = useMemo(() => {
     return RANGE_DATA[dateRange] || RANGE_DATA["This Month"];
   }, [dateRange]);
 
-  if (isLoading) return <div className="dashboard-container">Loading...</div>;
+  if (isUserLoading || isHistoryLoading) return <div className="dashboard-container">Loading...</div>;
 
-  const restaurant = userData?.restaurants?.[0];
+  const restaurant = userData?.data?.restaurants?.[0] || userData?.restaurants?.[0];
   const isApproved = restaurant?.verification_status === "APPROVED";
 
   if (!isApproved) {
@@ -62,6 +66,8 @@ const DashboardBackground = ({ onOpenOrder }) => {
       </div>
     );
   }
+
+  const formatPrice = (price) => `₹${Number(price || 0).toFixed(2)}`;
 
   return (
     <div className="dashboard-container">
@@ -126,7 +132,7 @@ const DashboardBackground = ({ onOpenOrder }) => {
             </h2>
             <div className="analytics-trend">
               <span className="material-symbols-outlined">trending_up</span>
-              +12.4% vs last{" "}
+              {summary.total_orders?.diff >= 0 ? '+' : ''}{summary.total_orders?.diff?.toFixed(1)}% vs last{" "}
               {dateRange.replace("This ", "").toLowerCase() || "period"}
             </div>
           </div>
@@ -176,74 +182,80 @@ const DashboardBackground = ({ onOpenOrder }) => {
         <div className="recent-orders-card">
           <div className="recent-orders-header">
             <h2 className="recent-orders-title">Recent Orders</h2>
-            {!showAllOrders && ALL_ORDERS.length > 4 && (
+            {!showAllOrders && orders.length > 4 && (
               <span className="orders-count-badge">
-                {ALL_ORDERS.length} Total
+                {orders.length} Total
               </span>
             )}
           </div>
           <div className={`orders-list ${showAllOrders ? "expanded" : ""}`}>
-            {displayedOrders.map((order) => (
-              <div key={order.id} onClick={onOpenOrder} className="order-item">
-                <div className="order-item-left">
-                  <div className="order-item-icon">
-                    {order.items[0]?.icon || "🛒"}
+            {displayedOrders.length === 0 ? (
+              <p style={{ padding: '20px', textAlign: 'center', color: '#6B7280' }}>No orders found for this period.</p>
+            ) : (
+              displayedOrders.map((order) => (
+                <div key={order.id} onClick={() => onOpenOrder(order)} className="order-item">
+                  <div className="order-item-left">
+                    <div className="order-item-icon">
+                      🛒
+                    </div>
+                    <div>
+                      <p className="order-item-id">#{order.order_number || order.id.slice(0, 8)}</p>
+                      <p className="order-item-details">
+                        {order.customer} • {new Date(order.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="order-item-id">#{order.id}</p>
-                    <p className="order-item-details">
-                      Table {order.customer.table} • {order.customer.name}
+                  <div className="order-item-right">
+                    <p className="order-item-price">
+                      {formatPrice(order.amount)}
                     </p>
+                    <span
+                      className={`order-item-status ${order.status.toLowerCase()}`}
+                    >
+                      {order.status}
+                    </span>
                   </div>
                 </div>
-                <div className="order-item-right">
-                  <p className="order-item-price">
-                    ${order.payment.subtotal.toFixed(2)}
-                  </p>
-                  <span
-                    className={`order-item-status ${order.status.toLowerCase()}`}
-                  >
-                    {order.status}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
-          <button
-            onClick={() => setShowAllOrders(!showAllOrders)}
-            className="view-all-button"
-          >
-            {showAllOrders ? "Show Less" : "View All Orders"}
-            <span
-              className={`material-symbols-outlined ${showAllOrders ? "rotated" : ""
-                }`}
+          {orders.length > 4 && (
+            <button
+              onClick={() => setShowAllOrders(!showAllOrders)}
+              className="view-all-button"
             >
-              {showAllOrders ? "keyboard_arrow_up" : "arrow_forward"}
-            </span>
-          </button>
+              {showAllOrders ? "Show Less" : "View All Orders"}
+              <span
+                className={`material-symbols-outlined ${showAllOrders ? "rotated" : ""
+                  }`}
+              >
+                {showAllOrders ? "keyboard_arrow_up" : "arrow_forward"}
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
       <div className="stats-grid">
         <StatCard
           label="Total Revenue"
-          value="$24,510"
-          change="+8.5%"
+          value={formatPrice(summary.total_revenue?.value)}
+          change={`${summary.total_revenue?.diff >= 0 ? '+' : ''}${summary.total_revenue?.diff?.toFixed(1)}%`}
           icon="payments"
           color="blue"
         />
         <StatCard
           label="Avg. Order Value"
-          value="$42.20"
-          change="-2.1%"
+          value={formatPrice(summary.avg_order_value?.value)}
+          change={`${summary.avg_order_value?.diff >= 0 ? '+' : ''}${summary.avg_order_value?.diff?.toFixed(1)}%`}
           icon="point_of_sale"
           color="red"
         />
         <StatCard
           label="Total Orders"
-          value="582"
-          change="+14%"
+          value={summary.total_orders?.value || 0}
+          change={`${summary.total_orders?.diff >= 0 ? '+' : ''}${summary.total_orders?.diff?.toFixed(1)}%`}
           icon="receipt_long"
           color="green"
         />

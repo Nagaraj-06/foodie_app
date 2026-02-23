@@ -26,7 +26,6 @@ const FilterSection = ({
             { label: "Cancelled", value: OrderStatus.CANCELLED },
           ].map((item) => (
             <label key={item.label} className="checkbox-label">
-              {console.log(activeStatuses)}
               <input
                 type="checkbox"
                 checked={activeStatuses.includes(item.value)}
@@ -34,9 +33,8 @@ const FilterSection = ({
                 className="checkbox-input"
               />
               <span
-                className={`checkbox-text ${
-                  activeStatuses.includes(item.value) ? "active" : ""
-                }`}
+                className={`checkbox-text ${activeStatuses.includes(item.value) ? "active" : ""
+                  }`}
               >
                 {item.label}
               </span>

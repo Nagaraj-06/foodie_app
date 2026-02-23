@@ -2,7 +2,7 @@ import React from "react";
 import "./OrderCard.css";
 import { OrderStatus } from "../../pages/myOrders/types";
 
-const OrderCard = ({ order, onTrack }) => {
+const OrderCard = ({ order, statusLabel, onTrack }) => {
   const getStatusClass = (status) => {
     switch (status) {
       case OrderStatus.COMPLETED:
@@ -11,6 +11,8 @@ const OrderCard = ({ order, onTrack }) => {
         return "status-in-progress";
       case OrderStatus.CANCELLED:
         return "status-cancelled";
+      case OrderStatus.REFUNDED:
+        return "status-refunded";
       default:
         return "status-default";
     }
@@ -56,9 +58,9 @@ const OrderCard = ({ order, onTrack }) => {
 
           {/* Status & Price */}
           <div className="order-price-status">
-            <span className="order-price">${order.price.toFixed(2)}</span>
+            <span className="order-price">₹{order.price.toFixed(2)}</span>
             <span className={`order-status ${getStatusClass(order.status)}`}>
-              {order.status}
+              {statusLabel || order.status}
             </span>
           </div>
         </div>
