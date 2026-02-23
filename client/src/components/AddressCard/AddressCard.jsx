@@ -31,7 +31,7 @@ const AddressCard = ({ address, onEdit, onDelete }) => {
           className="address-action-btn delete-btn"
           onClick={() => onDelete(address.id)}
         >
-          <span className="material-symbols-outlined">delete</span>
+          <span className="material-symbols-outlined">Delete</span>
           Delete
         </button>
       </div>
