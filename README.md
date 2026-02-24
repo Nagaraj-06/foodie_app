@@ -98,28 +98,33 @@ Foodie follows a classic **Event-Driven Architecture (EDA)**. Services never cal
 
 ```mermaid
 graph TD
-    User((👤 User)) -->|Browser| UI[⚛️ React 19 / Redux]
+    subgraph "🚀 CI/CD Workflow"
+        Developer[👤 Developer] -->|Git Push| GitHub[🐙 GitHub Repo]
+        GitHub -->|Trigger| GHA[👷 GitHub Actions]
+        GHA -->|SSH Build & Deploy| EC2[🖥️ AWS EC2 Instance]
+    end
 
-    UI -->|HTTPS| AuthS[🔐 Auth Service]
-    UI -->|HTTPS| OrderS[📦 Order Service]
-    UI -->|HTTPS| PayS[💳 Payment Service]
+    subgraph "☁️ Production Environment (AWS)"
+        Client((👤 User)) -->|Browser| Web[⚛️ React 19 / Redux]
+        Web -->|API Calls (Port 8000)| NGINX[🔀 NGINX Gateway / LB]
+        
+        NGINX -->|Proxy| AuthS[🔐 Auth Service]
+        NGINX -->|Proxy| OrderS[📦 Order Service]
+        NGINX -->|Proxy| PayS[💳 Payment Service]
 
-    OrderS -->|Produce: Order.Created| Kafka{⚡ Kafka Broker}
-    Kafka   -->|Consume| PayS
+        OrderS <-->|Events| Kafka{⚡ Kafka Broker}
+        PayS   <-->|Events| Kafka
+        
+        PayS -->|Webhooks| Stripe[🌐 Stripe Gateway]
 
-    PayS    -->|API Call| Gateway[🌐 Stripe Gateway]
-    Gateway -->|Webhook| PayS
+        AuthS & OrderS & PayS --> DB[(🐘 PostgreSQL / Prisma)]
+    end
 
-    PayS    -->|Produce: Payment.Success / Payment.Failed| Kafka
-    Kafka   -->|Consume: Update Order Status| OrderS
-
-    OrderS --> DB[(🐘 PostgreSQL / Prisma)]
-    AuthS  --> DB
-    PayS   --> DB
-
+    style GHA fill:#2671E5,color:#fff
+    style EC2 fill:#FF9900,color:#fff
     style Kafka fill:#231F20,color:#fff
     style DB fill:#316192,color:#fff
-    style UI fill:#20232a,color:#61DAFB
+    style NGINX fill:#009639,color:#fff
 ```
 
 ---
