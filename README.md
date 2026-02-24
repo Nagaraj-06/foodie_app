@@ -79,21 +79,16 @@
 ## 🛠️ Tech Stack
 
 ### ⚙️ Core Technologies
-| **Frontend** | **Backend** | **Database / ORM** | **Messaging** | **DevOps** |
+| **Frontend** | **Backend** | **Database** | **Messaging** | **DevOps** |
 | :---: | :---: | :---: | :---: | :---: |
-| <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" width="60"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" width="60"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" width="60"> | <img src="https://www.vectorlogo.zone/logos/apache_kafka/apache_kafka-icon.svg" width="60"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" width="60"> |
-| **React 19 & Redux** | **Node.js & Express** | **PostgreSQL & Prisma** | **Apache Kafka** | **Docker & AWS** |
+| <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" width="60"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" width="60"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/postgresql/postgresql-original-wordmark.svg" width="60"> | <img src="https://www.vectorlogo.zone/logos/apache_kafka/apache_kafka-ar21.svg" width="100"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/docker/docker-original-wordmark.svg" width="60"> |
+| **React 19 & Redux** | **Node.js & Express** | **PostgreSQL** | **Apache Kafka** | **Docker & AWS** |
 
 ### 🛠️ Specialized Tools
-<p>
-  <img src="https://img.shields.io/badge/Prisma_ORM-2D3748?style=for-the-badge&logo=prisma&logoColor=white" />
-  <img src="https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white" />
-  <img src="https://img.shields.io/badge/Redux_Toolkit-764ABC?style=for-the-badge&logo=redux&logoColor=white" />
-  <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" />
-  <img src="https://img.shields.io/badge/Recharts-FF6B6B?style=for-the-badge&logo=chartdotjs&logoColor=white" />
-  <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" />
-  <img src="https://img.shields.io/badge/Joi_Validation-0080FF?style=for-the-badge&logo=javascript&logoColor=white" />
-</p>
+| **ORM** | **Payments** | **State Management** | **Security / JWT** | **Documentation** |
+| :---: | :---: | :---: | :---: | :---: |
+| <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/prisma/prisma-original.svg" width="60"> | <img src="https://www.vectorlogo.zone/logos/stripe/stripe-icon.svg" width="60"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/redux/redux-original.svg" width="60"> | <img src="https://www.vectorlogo.zone/logos/jwt/jwt-icon.svg" width="60"> | <img src="https://www.vectorlogo.zone/logos/swagger/swagger-icon.svg" width="60"> |
+| **Prisma ORM** | **Stripe Checkout** | **Redux Toolkit** | **JWT / Joi** | **Swagger UI** |
 
 ---
 
