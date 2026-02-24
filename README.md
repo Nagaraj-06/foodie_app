@@ -99,25 +99,27 @@ Foodie follows a classic **Event-Driven Architecture (EDA)**. Services never cal
 ```mermaid
 graph TD
     subgraph "🚀 CI/CD Workflow"
-        Developer[👤 Developer] -->|Git Push| GitHub[🐙 GitHub Repo]
-        GitHub -->|Trigger| GHA[👷 GitHub Actions]
-        GHA -->|SSH Build & Deploy| EC2[🖥️ AWS EC2 Instance]
+        Developer["👤 Developer"] -->|"Git Push"| GitHub["🐙 GitHub Repo"]
+        GitHub -->|"Trigger"| GHA["👷 GitHub Actions"]
+        GHA -->|"SSH Build & Deploy"| EC2["🖥️ AWS EC2 Instance"]
     end
 
     subgraph "☁️ Production Environment (AWS)"
-        Client((👤 User)) -->|Browser| Web[⚛️ React 19 / Redux]
-        Web -->|API Calls (Port 8000)| NGINX[🔀 NGINX Gateway / LB]
+        Client["👤 User"] -->|"Browser"| Web["⚛️ React 19 / Redux"]
+        Web -->|"API Calls (Port 8000)"| NGINX["🔀 NGINX Gateway / LB"]
         
-        NGINX -->|Proxy| AuthS[🔐 Auth Service]
-        NGINX -->|Proxy| OrderS[📦 Order Service]
-        NGINX -->|Proxy| PayS[💳 Payment Service]
+        NGINX -->|"Proxy"| AuthS["🔐 Auth Service"]
+        NGINX -->|"Proxy"| OrderS["📦 Order Service"]
+        NGINX -->|"Proxy"| PayS["💳 Payment Service"]
 
-        OrderS <-->|Events| Kafka{⚡ Kafka Broker}
-        PayS   <-->|Events| Kafka
+        OrderS <-->|"Events"| Kafka["⚡ Kafka Broker"]
+        PayS   <-->|"Events"| Kafka
         
-        PayS -->|Webhooks| Stripe[🌐 Stripe Gateway]
+        PayS -->|"Webhooks"| Stripe["🌐 Stripe Gateway"]
 
-        AuthS & OrderS & PayS --> DB[(🐘 PostgreSQL / Prisma)]
+        AuthS --> DB["🐘 PostgreSQL / Prisma"]
+        OrderS --> DB
+        PayS --> DB
     end
 
     style GHA fill:#2671E5,color:#fff
