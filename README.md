@@ -87,7 +87,7 @@
 ### 🛠️ Specialized Tools
 | **ORM** | **Payments** | **State Management** | **Security / JWT** | **Documentation** |
 | :---: | :---: | :---: | :---: | :---: |
-| <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/prisma/prisma-original.svg" width="60"> | <img src="https://www.vectorlogo.zone/logos/stripe/stripe-icon.svg" width="60"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/redux/redux-original.svg" width="60"> | <img src="https://www.vectorlogo.zone/logos/jwt/jwt-icon.svg" width="60"> | <img src="https://www.vectorlogo.zone/logos/swagger/swagger-icon.svg" width="60"> |
+| <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/prisma/prisma-original.svg" width="60"> | <img src="https://www.vectorlogo.zone/logos/stripe/stripe-icon.svg" width="60"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/redux/redux-original.svg" width="60"> | <img src="https://jwt.io/img/pic_logo.svg" width="60"> | <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/swagger/swagger-original.svg" width="60"> |
 | **Prisma ORM** | **Stripe Checkout** | **Redux Toolkit** | **JWT / Joi** | **Swagger UI** |
 
 ---
@@ -137,20 +137,12 @@ graph TD
 git clone https://github.com/Nagaraj-06/foodie_app.git
 cd foodie_app
 
-# 2. Start infrastructure (Kafka, Zookeeper, PostgreSQL)
+# 2. Start all Backend Services & Infrastructure (Recommended)
+# This launches Kafka, Zookeeper, Redis, Gateway, and all Microservices
 cd backend
-docker-compose up -d
+docker-compose up --build -d
 
-# 3. Install all service dependencies & run migrations
-npm run install:all
-npm run prisma:generate
-npm run prisma:migrate
-
-# 4. Start backend services
-npm run dev:auth
-npm run dev:order
-
-# 5. Start frontend (new terminal)
+# 3. Start Frontend Client (New Terminal)
 cd ../client
 npm install
 npm run dev
