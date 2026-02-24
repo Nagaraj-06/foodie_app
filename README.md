@@ -97,36 +97,41 @@
 Foodie follows a classic **Event-Driven Architecture (EDA)**. Services never call each other directly — all coordination flows through the **Kafka broker**, ensuring zero tight coupling and graceful failure handling.
 
 ```mermaid
-graph TD
-    subgraph "🚀 CI/CD Workflow"
-        Developer["👤 Developer"] -->|"Git Push"| GitHub["🐙 GitHub Repo"]
-        GitHub -->|"Trigger"| GHA["👷 GitHub Actions"]
-        GHA -->|"SSH Build & Deploy"| EC2["🖥️ AWS EC2 Instance"]
+graph LR
+    subgraph "🚀 CI/CD Pipeline"
+        direction LR
+        Dev["👤 Developer"] -->|"Git Push"| GitHub["🐙 GitHub Repository"]
+        GitHub -->|"Workflow Trigger"| GHA["👷 GitHub Actions CI/CD"]
+        GHA -->|"SSH Deploy"| EC2["🖥️ AWS EC2 Server"]
     end
 
-    subgraph "☁️ Production Environment (AWS)"
-        Client["👤 User"] -->|"Browser"| Web["⚛️ React 19 / Redux"]
-        Web -->|"API Calls (Port 8000)"| NGINX["🔀 NGINX Gateway / LB"]
+    subgraph "☁️ Production Runtime (AWS Cloud)"
+        direction TB
+        User["👤 End User"] -->|"Browser Interface"| ReactApp["⚛️ React 19 / Redux"]
+        ReactApp -->|"API Requests (Port 8000)"| Nginx["🔀 NGINX Reverse Proxy"]
         
-        NGINX -->|"Proxy"| AuthS["🔐 Auth Service"]
-        NGINX -->|"Proxy"| OrderS["📦 Order Service"]
-        NGINX -->|"Proxy"| PayS["💳 Payment Service"]
+        Nginx -->|"Proxy"| AuthS["🔐 Auth Service"]
+        Nginx -->|"Proxy"| OrderS["📦 Order Service"]
+        Nginx -->|"Proxy"| PayS["💳 Payment Service"]
 
-        OrderS <-->|"Events"| Kafka["⚡ Kafka Broker"]
-        PayS   <-->|"Events"| Kafka
+        OrderS <-->|"Order Events"| Kafka["⚡ Apache Kafka Broker"]
+        PayS   <-->|"Payment Events"| Kafka
         
-        PayS -->|"Webhooks"| Stripe["🌐 Stripe Gateway"]
+        PayS -->|"Stripe API"| Stripe["🌐 Stripe Gateway"]
+        Stripe -->|"Webhook"| PayS
 
-        AuthS --> DB["🐘 PostgreSQL / Prisma"]
+        AuthS --> DB[("🐘 PostgreSQL / Prisma")]
         OrderS --> DB
         PayS --> DB
     end
+
+    EC2 -.->|"Hosts"| Nginx
 
     style GHA fill:#2671E5,color:#fff
     style EC2 fill:#FF9900,color:#fff
     style Kafka fill:#231F20,color:#fff
     style DB fill:#316192,color:#fff
-    style NGINX fill:#009639,color:#fff
+    style Nginx fill:#009639,color:#fff
 ```
 
 ---
