@@ -1,4 +1,4 @@
-import Sidebar from "../components/Sidebar/Sidebar";
+import Sidebar from "../components/sidebar/SideBar";
 import CartMain from "../pages/cart/CartMain";
 import Hotels from "../pages/hotels/Hotels";
 import Items from "../pages/items/Items";
