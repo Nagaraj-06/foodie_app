@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import "./VariantPage.css";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import { VariantSelector } from "../../components/variantSelector/variantSelector";
+import { VariantSelector } from "../../components/variantSelector/VariantSelector";
 import { useParams } from "react-router-dom";
 import { useGetMenuItemQuery } from "../../store/api/restaurantApi";
 import { CircularProgress } from "@mui/material";
@@ -15,7 +15,15 @@ export const VariantPage = () => {
 
   if (isLoading) {
     return (
-      <div className="variant-page-wrapper" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+      <div
+        className="variant-page-wrapper"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
+      >
         <CircularProgress />
       </div>
     );
@@ -38,13 +46,15 @@ export const VariantPage = () => {
     id: item.id,
     name: item.name,
     description: item.description,
-    imageUrl: item.photo ? `${API_BASE_URL}/auth/${item.photo}` : vegBiriyaniImg,
+    imageUrl: item.photo
+      ? `${API_BASE_URL}/auth/${item.photo}`
+      : vegBiriyaniImg,
     badgeCount: 1,
-    variants: item.restaurant_item_variants.map(v => ({
+    variants: item.restaurant_item_variants.map((v) => ({
       id: v.id,
       name: v.name,
-      price: v.price
-    }))
+      price: v.price,
+    })),
   };
 
   return (
