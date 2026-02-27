@@ -31,7 +31,7 @@
 
 *A production-grade, distributed platform engineered for high availability, seamless order fulfillment, and resilient payment workflows.*
 
-[🚀 **Live Demo**](http://foodie-hub-app.duckdns.org:8000)
+[🚀 **Live Demo**](http://example.com)
 
 </div>
 
