@@ -44,14 +44,17 @@ services:
     image: nginx:latest
     container_name: gateway
     ports:
-      - "8000:8000"
+      - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
       - FRONTEND_URL=${FRONTEND_URL}
-      - NGINX_ENVSUBST_FILTER=FRONTEND_URL
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - NGINX_ENVSUBST_FILTER=FRONTEND_URL DOMAIN_NAME
     depends_on:
       - kafka
       - auth-service

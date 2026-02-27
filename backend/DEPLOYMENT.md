@@ -87,3 +87,21 @@ chmod 700 duck.sh
 Set the Cron Job (whenever start server from stop) : `@reboot ~/duckdns/duck.sh >/dev/null 2>&1`
 
 DOMAIN => `http://foodie-hub-app.duckdns.org:8000`
+
+-------
+
+`Configure HTTPS for Backend (Fix Mixed Content Error) - switch HTTP -> HTTPS`
+
+Open Ports: Go to AWS Console and ensure port 80 and 443 are open in your Security Group.
+
+Stop Docker:
+`cd ~/foodie_app/backend`
+`docker-compose down`
+
+Install Certbot:
+`sudo apt update`
+`sudo apt install certbot -y`
+
+Generate Certificate:
+`sudo certbot certonly --standalone -d foodie-hub-app.duckdns.org`
+curl -v https://foodie-hub-app.duckdns.org/health
