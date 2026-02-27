@@ -1,79 +1,88 @@
-import React, { useState } from "react";
-import MenuIcon from "@mui/icons-material/Menu";
-import HotelIcon from "@mui/icons-material/Hotel";
-import ItemsIcon from "@mui/icons-material/FoodBank";
-import OrderIcon from "@mui/icons-material/OnlinePredictionRounded";
-import CartIcon from "@mui/icons-material/CardGiftcard";
-import profilePic from "../../assets/profile.png";
-import nestelPic from "../../assets/nestle.png";
-import "./SideBar.css";
 import { useNavigate } from "react-router-dom";
+import { useGetProfileQuery } from "../../store/api/authApi";
+import { NavItem } from "./NavItem";
+import "./Sidebar.css";
 
-const SideBar = () => {
-  const [active, setActive] = useState("hotels");
+const Sidebar = () => {
   const navigate = useNavigate();
+  const { data: userData } = useGetProfileQuery();
+  const userRole = userData?.role?.name;
 
   return (
-    <div className="sidebar">
-      <div className="top">
-        <button className="child top-btn">
-          <MenuIcon className="icon" />
-        </button>
-      </div>
-      <div className="middle">
-        <button
-          className={`child ${active === "hotels" ? "selected" : ""}`}
-          onClick={() => {
-            setActive("hotels");
-            navigate("/hotels");
-          }}
-        >
-          <HotelIcon className="icon" />
-          <span className={active === "hotels" ? "bold" : ""}>Hotels</span>
-        </button>
-        {/* <button
-          className={`child ${active === "items" ? "selected" : ""}`}
-          onClick={() => {
-            setActive("items");
-            navigate("/items");
-          }}
-        >
-          <ItemsIcon className="icon" />
-          <span>Items</span>
-        </button> */}
-        <button
-          className={`child ${active === "orders" ? "selected" : ""}`}
-          onClick={() => {
-            setActive("myorders");
-            navigate("/myorders");
-          }}
-        >
-          <OrderIcon className="icon" />
-          <span>Orders</span>
-        </button>
+    <aside className="sidebar">
+      <div className="sidebar-top">
+        <nav className="sidebar-nav">
+          {userRole === "restaurant_owner" && (
+            <>
+              <NavItem icon="dashboard" label="Dashboard" path="/dashboard" />
+              {userData.restaurants?.length > 0 ? (
+                <NavItem
+                  icon={
+                    userData.restaurants[0].verification_status === "APPROVED"
+                      ? "storefront"
+                      : userData.restaurants[0].verification_status ===
+                          "REJECTED"
+                        ? "error"
+                        : "pending"
+                  }
+                  label={
+                    userData.restaurants[0].verification_status === "APPROVED"
+                      ? "Business Details"
+                      : userData.restaurants[0].verification_status ===
+                          "REJECTED"
+                        ? "Registration Rejected"
+                        : "Verification Pending"
+                  }
+                  path="/business_profile"
+                />
+              ) : (
+                <NavItem
+                  icon="add_business"
+                  label="Register Business"
+                  path="/business_register"
+                />
+              )}
+              <NavItem
+                icon="post_add"
+                label="Add Menu Item"
+                path="/add_menu_item"
+              />
+            </>
+          )}
 
-        <button
-          className={`child ${active === "carts" ? "selected" : ""}`}
-          onClick={() => {
-            setActive("carts");
-            navigate("/carts");
-          }}
-        >
-          <CartIcon className="icon" />
-          <span>Cart</span>
-        </button>
+          {userRole === "customer" && (
+            <>
+              <NavItem
+                icon="storefront"
+                label="Restaurants"
+                path="/restaurants"
+              />
+              <NavItem icon="receipt_long" label="MyOrders" path="/myorders" />
+              <NavItem icon="shopping_cart" label="carts" path="/carts" />
+            </>
+          )}
+
+          {/* Default links for unauthenticated or other roles if any */}
+          {!userRole && (
+            <NavItem
+              icon="storefront"
+              label="Restaurants"
+              path="/restaurants"
+            />
+          )}
+        </nav>
       </div>
 
-      <div className="bottom">
-        <button className="child bottom-btn">
-          <img src={nestelPic} alt="my pic" className="nestlePic"></img>
-        </button>
-        <button className="child bottom-btn">
-          <img src={profilePic} alt="my pic" className="profilePic"></img>
-        </button>
+      <div className="sidebar-bottom">
+        <img
+          src="https://picsum.photos/seed/user123/100/100"
+          alt="Avatar"
+          className="avatar"
+          onClick={() => navigate("/profile")}
+        />
       </div>
-    </div>
+    </aside>
   );
 };
 
-export default SideBar;
+export default Sidebar;
