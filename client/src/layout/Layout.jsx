@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import "./Layout.css";
-import Sidebar from "../components/sidebar/newSidebar/SideBar";
+import Sidebar from "../components/sidebar/newSidebar/sidebar";
 
 const Layout = () => {
   return (
