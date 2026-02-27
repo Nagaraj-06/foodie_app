@@ -14,7 +14,7 @@ To get the schema file from pg : `C:\Program Files\PostgreSQL\17\bin\pg_dump.exe
 => After run this remove -> cmd this line => `-- CREATE SCHEMA public;`
 
 `rm -rf node_modules package-lock.json`
-
+for remove all old chaches : `git rm -r --cached .`
 
 EPERM: operation not permitted
 query_engine-windows.dll.node
