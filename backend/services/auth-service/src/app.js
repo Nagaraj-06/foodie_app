@@ -9,10 +9,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const swaggerDocs = require("./config/swagger");
 
-app.use(cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-}));
+// CORS is handled by the Nginx Gateway
 
 app.use(cookieParser());
 
