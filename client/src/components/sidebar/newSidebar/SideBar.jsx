@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useGetProfileQuery } from "../../../store/api/authApi";
 import { NavItem } from "./NavItem";
-import "./Sidebar.css";
+import "./SideBar.css";
 
 const Sidebar = () => {
   const navigate = useNavigate();
