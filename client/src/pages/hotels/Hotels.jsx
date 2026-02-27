@@ -14,6 +14,7 @@ import madrasSquareImg from "../../assets/madrasSquare.png";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import { API_BASE_URL } from "../../config";
 import { CircularProgress } from "@mui/material";
+import { useGetRestaurantsQuery } from "../../store/api/restaurantApi";
 
 const Hotels = () => {
   const { data: restaurantsData, isLoading } = useGetRestaurantsQuery();

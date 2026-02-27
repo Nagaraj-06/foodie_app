@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSendOtpMutation, useVerifyOtpMutation, useGetRolesQuery, useGetProfileQuery } from "../../store/api/authApi";
 import { setCredentials } from "../../store/slices/authSlice";
+import { API_BASE_URL } from "../../config";
 
 export const LoginScreen = () => {
   const navigate = useNavigate();
