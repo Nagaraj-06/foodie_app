@@ -160,7 +160,7 @@ router.get(
   "/google/callback",
   require("passport").authenticate("google", {
     session: false,
-    failureRedirect: "http://localhost:5173/login?error=oauth_failed",
+    failureRedirect: `${process.env.FRONTEND_URL}/login?error=oauth_failed`,
   }),
   async (req, res) => {
     try {
@@ -194,10 +194,10 @@ router.get(
 
       // Redirect to frontend dashboard or home
       // We can also pass a flag that login was successful
-      res.redirect(`http://localhost:5173/auth-success?token=${accessToken}`);
+      res.redirect(`${process.env.FRONTEND_URL}/auth-success?token=${accessToken}`);
     } catch (err) {
       console.error("Google Auth Error:", err);
-      res.redirect(`http://localhost:5173/login?error=${encodeURIComponent(err.message)}`);
+      res.redirect(`${process.env.FRONTEND_URL}/login?error=${encodeURIComponent(err.message)}`);
     }
   }
 );

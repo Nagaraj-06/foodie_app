@@ -7,6 +7,7 @@ import { useGetMyOrdersQuery } from "../../store/api/orderApi";
 import { CircularProgress } from "@mui/material";
 import "./MyOrders.css";
 import vegBiriyaniImg from "../../assets/food-items/vegBiriyani.png";
+import { API_BASE_URL } from "../../config";
 
 // Map backend OrderStatus enum to frontend OrderStatus
 const mapStatus = (status) => {

@@ -7,7 +7,7 @@ import { useGetMenuItemQuery } from "../../store/api/restaurantApi";
 import { CircularProgress } from "@mui/material";
 import vegBiriyaniImg from "../../assets/food-items/vegBiriyani.png";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // From .env
+import { API_BASE_URL } from "../../config";
 
 export const VariantPage = () => {
   const { itemId } = useParams();

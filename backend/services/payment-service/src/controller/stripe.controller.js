@@ -23,7 +23,7 @@ async function getCheckoutSession(req, res) {
             return res.status(400).json({ success: false, message: "Order is already paid" });
         }
 
-        const baseUrl = process.env.FRONTEND_BASE_URL || "http://localhost:5173";
+        const baseUrl = process.env.FRONTEND_URL;
         const session = await createStripeCheckoutSessionService(
             order.total_amount,
             order.id,

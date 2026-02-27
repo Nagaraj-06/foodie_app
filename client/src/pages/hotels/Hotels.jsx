@@ -12,10 +12,8 @@ import bombayTruffleImg from "../../assets/bombayTruffle.png";
 import grandHotelImg from "../../assets/grandHotel.png";
 import madrasSquareImg from "../../assets/madrasSquare.png";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import { useGetRestaurantsQuery } from "../../store/api/restaurantApi";
+import { API_BASE_URL } from "../../config";
 import { CircularProgress } from "@mui/material";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // From .env
 
 const Hotels = () => {
   const { data: restaurantsData, isLoading } = useGetRestaurantsQuery();

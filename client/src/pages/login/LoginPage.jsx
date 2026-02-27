@@ -88,7 +88,7 @@ export const LoginScreen = () => {
       alert("Role information not loaded yet. Please wait a moment.");
       return;
     }
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const baseUrl = API_BASE_URL;
     window.location.href = `${baseUrl}/auth/public/api/auth/google?role_id=${role_id}`;
   };
 

@@ -10,7 +10,7 @@ import { CircularProgress } from "@mui/material";
 import vegBiriyaniImg from "../../assets/food-items/vegBiriyani.png";
 import vegRollImg from "../../assets/food-items/vegRoll.png";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // From .env
+import { API_BASE_URL } from "../../config";
 
 const Items = () => {
   const { restaurantId } = useParams();

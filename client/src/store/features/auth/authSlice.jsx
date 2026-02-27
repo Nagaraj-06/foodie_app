@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/auth/public/api/auth`;
+import { API_BASE_URL as BASE_URL_ENV } from "../../config";
+
+const API_BASE_URL = `${BASE_URL_ENV}/auth/public/api/auth`;
 
 // Async thunk for email/password login
 export const loginUser = createAsyncThunk(

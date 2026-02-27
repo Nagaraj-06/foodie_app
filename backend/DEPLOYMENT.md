@@ -70,7 +70,7 @@ refered : https://youtu.be/sdyT2BGP4y0?si=eJ4yyrQxOcMtJxtv
 8) TO COPY THE ENV VARIABLE'S
 i) `nano services/auth-service/.env` check ls -l services/auth-service/.env (if 0 -> use alternaticve way)
 ii) use nano (when we have env file in folder) -> [otherwise use cat]
-`cat <<EOF > <ENV_PATH_FROM_CURRENT_DIRECTORY>` => (then copy-paste env file - without double cots, include "EOF" - In last-line ) 
+`cat <<EOF > <ENV_PATH_FROM_CURRENT_DIRECTORY>` => (then copy-paste env file - without double cots, include "EOF" - In last-line )
 9) # 1. Build the image
 `docker build -f services/auth-service/Dockerfile -t auth-service .`
 10) # 2. Run the container
