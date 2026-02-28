@@ -47,16 +47,14 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf.template:/etc/nginx/templates/nginx.conf.template:ro
+      - ./nginx/nginx.conf.template:/etc/nginx/templates/default.conf.template:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    environment:
-      - FRONTEND_URL=${FRONTEND_URL}
-      - DOMAIN_NAME=${DOMAIN_NAME}
-      - NGINX_ENVSUBST_FILTER=FRONTEND_URL DOMAIN_NAME
     env_file:
       - .env
+    environment:
+      - NGINX_ENVSUBST_FILTER=FRONTEND_URL|DOMAIN_NAME
     depends_on:
       - kafka
       - auth-service
