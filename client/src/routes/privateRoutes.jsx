@@ -3,6 +3,10 @@ import AddMenuItem from "../pages/addMenuItem/AddMenuItem";
 import BusinessDetailsPage from "../pages/businessProfile/BusinessDetailsPage";
 import BusinessRegister from "../pages/businessRegister/BusinessRegister";
 import ProfilePage from "../pages/profile/profilePage";
+import CartMain from "../pages/cart/CartMain";
+import MyOrders from "../pages/myOrders/MyOrders";
+import { PaymentPage } from "../pages/payment/PaymentPage";
+import { PaymentSuccess } from "../pages/payment/PaymentSuccess";
 
 const privateRoutes = [
   {
@@ -29,6 +33,26 @@ const privateRoutes = [
     path: "business_profile",
     element: <BusinessDetailsPage />,
     roles: ["restaurant_owner"],
+  },
+  {
+    path: "carts",
+    element: <CartMain />,
+    roles: ["customer"],
+  },
+  {
+    path: "myorders",
+    element: <MyOrders />,
+    roles: ["customer"],
+  },
+  {
+    path: "payment",
+    element: <PaymentPage />,
+    roles: ["customer"],
+  },
+  {
+    path: "payment/success",
+    element: <PaymentSuccess />,
+    roles: ["customer"],
   },
 ];
 

@@ -39,7 +39,7 @@ const Items = () => {
             <div className="heading">
               <ArrowBackIcon
                 className="arrow-icon"
-                onClick={() => navigate("/restaurants")}
+                onClick={() => navigate("/")}
               />
               <div id="hotel-name">
                 <span>

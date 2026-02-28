@@ -8,7 +8,7 @@ const HotelCard = ({ id, name, image, location, rating }) => {
   return (
     <div
       className="hotel-card"
-      onClick={() => navigate(`/restaurants/${id}`)}
+      onClick={() => navigate(`/${id}`)}
     >
       <div className="hotel-img">
         <img src={image} alt={name} cl assName="hotel-img" />

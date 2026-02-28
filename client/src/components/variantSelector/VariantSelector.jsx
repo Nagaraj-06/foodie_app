@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from "react";
 import "./VariantSelector.css";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useAddToCartMutation } from "../../store/api/cartApi";
 import { CircularProgress } from "@mui/material";
 
 export const VariantSelector = ({ product }) => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state) => state.auth);
   const [addToCart, { isLoading: isAdding }] = useAddToCartMutation();
 
   const [selectedVariantId, setSelectedVariantId] = useState(
@@ -28,6 +30,10 @@ export const VariantSelector = ({ product }) => {
   };
 
   const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
     try {
       await addToCart({
         variant_id: selectedVariantId,
@@ -160,7 +166,13 @@ export const VariantSelector = ({ product }) => {
             onClick={handleAddToCart}
             disabled={isAdding}
           >
-            {isAdding ? <CircularProgress size={24} color="inherit" /> : "Add to cart"}
+            {isAdding ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : isAuthenticated ? (
+              "Add to cart"
+            ) : (
+              "Login to Add"
+            )}
           </button>
         </div>
       </div>

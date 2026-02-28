@@ -21,7 +21,7 @@ const Sidebar = () => {
                     userData.restaurants[0].verification_status === "APPROVED"
                       ? "storefront"
                       : userData.restaurants[0].verification_status ===
-                          "REJECTED"
+                        "REJECTED"
                         ? "error"
                         : "pending"
                   }
@@ -29,7 +29,7 @@ const Sidebar = () => {
                     userData.restaurants[0].verification_status === "APPROVED"
                       ? "Business Details"
                       : userData.restaurants[0].verification_status ===
-                          "REJECTED"
+                        "REJECTED"
                         ? "Registration Rejected"
                         : "Verification Pending"
                   }
@@ -55,7 +55,7 @@ const Sidebar = () => {
               <NavItem
                 icon="storefront"
                 label="Restaurants"
-                path="/restaurants"
+                path="/"
               />
               <NavItem icon="receipt_long" label="MyOrders" path="/myorders" />
               <NavItem icon="shopping_cart" label="carts" path="/carts" />
@@ -67,7 +67,7 @@ const Sidebar = () => {
             <NavItem
               icon="storefront"
               label="Restaurants"
-              path="/restaurants"
+              path="/"
             />
           )}
         </nav>

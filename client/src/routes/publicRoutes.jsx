@@ -10,32 +10,16 @@ import { VariantPage } from "../pages/variantsAdd/VariantPage";
 
 const publicRoutes = [
   {
-    path: "restaurants",
+    path: "",
     element: <Hotels />,
   },
   {
-    path: "restaurants/:restaurantId",
+    path: ":restaurantId",
     element: <Items />,
   },
   {
-    path: "carts",
-    element: <CartMain />,
-  },
-  {
-    path: "restaurants/:restaurantId/items/:itemId/variants",
+    path: ":restaurantId/items/:itemId/variants",
     element: <VariantPage />,
-  },
-  {
-    path: "myorders",
-    element: <MyOrders />,
-  },
-  {
-    path: "payment",
-    element: <PaymentPage />,
-  },
-  {
-    path: "payment/success",
-    element: <PaymentSuccess />,
   },
   {
     path: "login",

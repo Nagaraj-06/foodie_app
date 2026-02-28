@@ -42,7 +42,7 @@ export const PaymentSuccess = () => {
                             <span className="material-icons-outlined">receipt_long</span>
                             View My Orders
                         </button>
-                        <button className="stripe-back-button" onClick={() => navigate("/restaurants")}>
+                        <button className="stripe-back-button" onClick={() => navigate("/")}>
                             <span className="material-icons-outlined">storefront</span>
                             Continue Shopping
                         </button>

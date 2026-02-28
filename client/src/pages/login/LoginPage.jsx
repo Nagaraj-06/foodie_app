@@ -129,7 +129,7 @@ export const LoginScreen = () => {
 
         {error && <div className="login-error-message">{error}</div>}
 
-        {!otpSent ? (
+        {/* {!otpSent ? (
           <form onSubmit={handleSendOtp} className="login-form">
             <div className="login-form-group">
               <label className="login-form-label">Phone Number</label>
@@ -174,7 +174,7 @@ export const LoginScreen = () => {
         <div className="login-divider-wrapper">
           <div className="login-divider-line"></div>
           <span className="login-divider-text">or</span>
-        </div>
+        </div> */}
 
         <button onClick={handleGoogleSignIn} className="login-google-button" disabled={isSendingOtp || isVerifyingOtp}>
           <svg className="login-google-icon" viewBox="0 0 48 48">
