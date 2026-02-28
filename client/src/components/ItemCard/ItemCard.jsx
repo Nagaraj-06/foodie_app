@@ -10,7 +10,7 @@ const ItemCard = ({ id, name, image, price, restaurantId }) => {
       className="item-card"
       onClick={() =>
         navigate(
-          `/restaurants/${restaurantId}/items/${id}/variants`
+          `/${restaurantId}/items/${id}/variants`
         )
       }
     >
