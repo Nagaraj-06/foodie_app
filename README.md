@@ -136,6 +136,16 @@ graph LR
 
 ---
 
+## 📊 Database Schema
+
+To ensure high availability and data consistency, Foodie utilizes a robust relational schema managed via **Prisma ORM**. The database is architected to handle complex order flows and concurrent payment processing.
+
+<div align="center">
+  <img src="assets/food-delivery.png" alt="ER Diagram" width="100%" />
+</div>
+
+---
+
 ## ⚙️ Setup & Installation
 
 ### Prerequisites
