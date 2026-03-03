@@ -31,7 +31,7 @@
 
 *A production-grade, distributed platform engineered for high availability, seamless order fulfillment, and resilient payment workflows.*
 
-[🚀 **Live Demo**](http://example.com)
+[🚀 **Live Demo**](https://foodie-app-ashen.vercel.app)
 
 </div>
 
