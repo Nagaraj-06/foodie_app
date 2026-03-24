@@ -122,10 +122,6 @@ async function verifyCheckoutPayment(req, res) {
                         transaction_id: session.id,
                     },
                 });
-                await tx.orders.update({
-                    where: { id: order_id },
-                    data: { payment_status: "SUCCESS", order_status: "CONFIRMED" },
-                });
                 return updated;
             });
 

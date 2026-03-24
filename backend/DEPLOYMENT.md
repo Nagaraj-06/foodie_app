@@ -30,11 +30,9 @@ Stop your server (Ctrl + C)
  -> Then open terminal again and run:
  -> `npx prisma generate`
 
-
 for kafka in `order-service`
  docker run --name zookeeper -p 2181:2181 zookeeper
  docker ps
-
 
 1) docker-compose up -d
 2) Fix: Added platform: linux/amd64 to the Kafka service to resolve the exec format error
