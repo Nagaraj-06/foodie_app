@@ -58,8 +58,9 @@ services:
     environment:
       - NGINX_ENVSUBST_FILTER=FRONTEND_URL|DOMAIN_NAME
     depends_on:
-      - kafka
       - auth-service
+      - order-service
+      - payment-service
     restart: always
 
   auth-service:
